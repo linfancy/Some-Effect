@@ -1,0 +1,79 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>css函数-设置读取对象属性</title>
+	<style type="text/css">
+	#box{
+		width: 400px;
+		border: 1px solid #f60;
+		height: 200px;
+		margin: 0 auto;
+	}
+	input{
+		border: 0;
+		background: #f60;
+		color: white;
+		font-weight: 700;
+		padding: 2px 4px;
+		cursor: pointer;
+		margin: 10px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		function css(elem, attr, value){
+			switch(arguments.length){
+				case 2 : 
+					if(typeof attr === "object"){
+						for(var i in attr){
+							elem.style[i] = attr[i];
+						}
+					}else{
+						return elem.currentStyle ? elem.currentStyle[attr] : getComputedStyle(elem, null)[attr];
+					}
+					break;
+				case 3 : 
+					elem.style[attr] = value;
+					break;
+				default : 
+					alert("参数错误!");
+			}
+		}
+		/*
+		    getComputedStyle是一个可以获取当前元素所有最终使用的CSS属性值。返回的是一个CSS样式声明对象([object CSSStyleDeclaration])，只读。
+			eg: var dom = document.getElementById("test"),
+    			style = window.getComputedStyle(dom , ":after");
+
+    		不过有个特殊情况，在FireFox3.6上不使用defaultView方法就搞不定的，就是访问框架(frame)的样式.
+    		eg: getComputedStyle = document.defaultView && document.defaultView.getComputedStyle
+
+			getComputedStyle方法IE6~8是不支持的,所以用element.currentStyle.  currentStyle是style的近亲,不过element.currentStyle获取的是元素当前应用的最终css属性(包括外链css文件,页面中嵌入的<style>属性)
+			
+			浮动属性 firefox浏览器中是cssFloat,而IE中是styleFloat
+			宽度 firefox 浏览器中是 px, 而IE是 em
+
+		*/
+		var boxElem = document.getElementById("box");
+		var input = document.getElementsByTagName("input");
+		input[0].onclick = function(){
+			alert("width: " + (css(boxElem, "width")) + "\nheight: " + (css(boxElem, "height")) + "\nbackground-color: " + (css(boxElem, "backgroundColor")) + "\n");
+		}
+		input[1].onclick = function(){
+			css(boxElem, {width:"600px",height:"500px"});
+		}
+		input[2].onclick = function(){
+			css(boxElem, {width: "400px", height: "200px", borderColor: "#f60", backgroundColor: "#fef4eb"});
+			//三个参数, 属性单一设置
+			for (i = 0; i < input.length; i++) css(input[i], "backgroundColor", "#f60") 
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="box">
+		<input type="button" value="Get Style">
+		<input type="button" value="Set Style">
+		<input type="button" value="Default Style">
+	</div>
+</body>
+</html>

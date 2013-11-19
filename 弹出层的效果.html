@@ -1,0 +1,71 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>弹出层的效果</title>
+	<style type="text/css">
+	div, h4, span,body{margin: 0; padding: 0;}
+	body{
+		font: 12px/1.5 Tahoma;
+	}
+	#overlay{
+		position: absolute;
+		top:0;left: 0;
+		width: 100%;height: 100%;
+		background: #000;
+		filters:alpha(opacity = 50);opacity: 0.5;
+		display: none;
+	}
+	#win{
+		border:2px solid #f90;
+		width: 400px;height: 200px;
+		left: 50%;
+		top: 50%;
+		position: absolute;
+		margin:-102px 0 0 -202px;
+		background: white;
+		display: none;
+	}
+	h4{
+		border-bottom: 2px solid #f90;
+		padding: 5px;
+		background: #f70;
+	}
+	span{
+		margin-right: 5px;
+		padding: 0 5px; 
+		float: right;
+		border:1px solid #f90;
+		background: white;
+		cursor: pointer;
+		overflow: hidden;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var btn = document.getElementsByTagName("button")[0];
+		var overlay = document.getElementById("overlay");
+		var win = document.getElementById("win");
+		var close = document.getElementsByTagName("span")[0];
+		btn.onclick = function(){
+			overlay.style.display = "block";
+			win.style.display = "block";
+		}
+		close.onclick = function(){
+			overlay.style.display = "none";
+			win.style.display = "none";
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="overlay"></div>
+	<center><button>弹出层</button></center>
+	<div id="win">
+		<h4>
+			弹出来
+			<span>×</span>
+		</h4>
+	</div>
+
+</body>
+</html>

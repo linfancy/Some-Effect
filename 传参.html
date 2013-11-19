@@ -1,0 +1,32 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>传参</title>
+	<style type="text/css">
+	*{
+		text-align: center;
+	}
+	input{
+		margin-bottom: 10px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var obtn = document.getElementsByTagName("button")[0];
+		var oinp = document.getElementsByTagName("input");
+		obtn.onclick = function(){
+			for(var i = 0; i < oinp.length; i++){
+				console.log(oinp[i].value);
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+	<input type="text" value="北京市">
+	<br>
+	<input type="text" value="haha">
+	<br>
+	<button>传参</button>
+</body>
+</html>

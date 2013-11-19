@@ -1,0 +1,43 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>ffefa4</title>
+	<style type="text/css">
+	body{
+		font: 12px/1.5 Tahomat;
+	}
+	#wrapper{
+		margin: 0 auto;
+		width: 500px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload =  function(){
+		var obtn = document.getElementsByTagName("button")[0];
+		var oinp = document.getElementsByTagName("input")[0];
+		var sum = document.getElementById("sum");
+		oinp.onkeyup = function(){
+			this.value = this.value.replace(/[^(\d)|(,)/,]/, "");
+		}
+		obtn.onclick = function(){
+			var sums = 0;
+			var oinp = document.getElementsByTagName("input")[0].value.split(",");
+			for(var p in oinp){
+				sums += parseInt(oinp[p]);
+			}
+			sum.innerHTML = sums;
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<label>
+			<input type="text" value="1,2,3,4,5,6">
+			<span>输入数字求和，数字之间用半角","号分隔</span>
+		</label>
+		<p><button>求和</button></p>
+		<div id="sum">dd</div>
+	</div>
+</body>
+</html>

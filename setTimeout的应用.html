@@ -1,0 +1,244 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>setTimeout的应用</title>
+	<style type="text/css">
+	body, ul, li, div, p, span, em{
+		margin:0;padding: 0;
+	}
+	#nav,#nav ul,#nav ul li,#nav ul li a:hover,#nav .subnav,#nav .subnav p,#nav .subnav p span,#nav .subnav .arrow{
+		background: url("http://js.fgm.cc/learn/lesson4/img/nav_bg.png") no-repeat;
+	}
+	#nav{
+		position: relative;
+		width: 910px;
+		background-position: 0 -36px;
+		margin: 10px auto;
+	}
+	#nav ul{
+		list-style-type: none;
+		height: 36px;
+		line-height: 36px;
+		margin-left: 10px;
+		padding-right: 10px;
+		background-position: right -72px;
+		overflow: hidden;
+	}
+	#nav ul li{
+		background-position: 0 -108px; 
+		float: left;
+		width: 110px;
+		margin-left: -2px; 
+	}
+	#nav ul li a{
+		text-decoration: none;
+		font-size: 14px;
+		color: white;
+		display: block;
+		text-align: center;
+		margin: 0 2px 0 4px;
+	}
+	#nav ul li a:hover{
+		background-position: -3px -144px;
+		font-weight: 700;
+	}
+	#nav .subnav{
+		position: absolute;
+		top:41px;
+		width: auto !important;
+		min-width: 110px;
+		height: 27px;line-height: 27px;
+		white-space: nowrap;
+		background-position: 0 -180px;
+		display: none;
+	}
+	#nav .subnav p{
+		margin-left: 10px;
+		padding-right: 10px;
+		background-position: right -234px;
+	}
+	#nav .subnav p span{
+		display: block;
+		color: #235e99;
+		background-repeat: repeat-x;
+		background-position: 0 -207px;
+	}
+ 	#nav .subnav .arrow{
+		position: absolute;
+		background-position: 0 -261px;
+		top: -4px;
+		display: block;
+		width: 11px;
+		height: 5px;
+	} 
+	#nav .subnav p a{
+		font-size: 12px;
+		display: inline;
+		color: #235e99;
+		text-decoration: none;
+		margin: 0 5px;
+		background-position: 0 -261px;
+	}
+	#nav .subnav p a:hover{
+		font-weight:400;
+		background-image:none;
+		border-bottom:2px solid;
+	}
+	</style>
+	<script type="text/javascript">
+	var get = {
+		byId: function(id){
+			return document.getElementById(id);
+		},
+		byClass : function(sclass, oParent){
+			var aClass = [];
+			var reClass = new RegExp("(^| )" + sclass + "( |$)");
+			var aElem = this.byTagName("*", oParent);
+			for(var i = 0; i < aElem.length; i++){
+				reClass.test(aElem[i].className) && aClass.push(aElem[i]);
+			}
+			return aClass;
+		},
+		byTagName : function(elem, obj){
+			return (obj || document).getElementsByTagName(elem);
+		}
+	};
+	window.onload = function(){
+		var oNav = get.byId("nav");
+		var ali = get.byTagName("li", oNav);
+		var asubnav = get.byClass("subnav", oNav);
+		var osubnav = oEm = timer = null;
+		var i = 0 ;
+		for(i = 1; i < ali.length; i++){
+			ali[i].onmouseover = function(){
+				for(i = 0; i < asubnav.length; i++){
+					asubnav[i].style.display = "none";
+				}
+				osubnav = get.byClass("subnav",  this)[0];
+				oEm = get.byTagName("em", this)[0];
+				osubnav.style.display = "block";
+				oNav.offsetWidth - this.offsetLeft > osubnav.offsetWidth ? osubnav.style.left = this.offsetLeft + "px" : osubnav.style.right = 0;
+				oEm.style.left = this.offsetLeft - osubnav.offsetLeft + 50 + "px";
+				clearTimeout(timer);
+				osubnav.onmouseover = function(){
+					(event || window.event).cancelBubble = true;
+					clearTimeout(timer);
+				}
+			};
+			ali[i].onmouseout = function(){
+				timer = setTimeout(function(){
+					osubnav.style.display = "none"
+				}, 300)
+			}
+
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="nav">
+		<ul>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="left:116px;">
+					<em class="arrow" style="left:50px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="left:224px;">
+					<em class="arrow" style="left:50px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="left:332px;">
+					<em class="arrow" style="left:50px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="left:332px;">
+					<em class="arrow" style="left:50px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="left:400px;">
+					<em class="arrow" style="left:50px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="right:0">
+					<em class="arrow" style="left:128px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="right:0">
+					<em class="arrow" style="left:82px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+			<li>
+				<a href="#">站长之家</a>
+				<div class="subnav" style="right:0">
+					<em class="arrow" style="left:527px;"></em>
+					<p>
+						<span>
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>|
+							<a href="#">业界动态</a>|<a href="#">业界动态</a>
+						</span>
+					</p>
+				</div>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>

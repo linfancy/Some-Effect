@@ -1,0 +1,96 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>简易的选项卡</title>
+	<style type="text/css">
+	body, div, ul, li{
+		margin: 0;padding: 0;
+	}
+	.wrapper{
+		width: 600px;height: auto;
+		background: #fff;
+		margin: 0 auto;
+		border:1px solid #000;
+	}
+	.wrapper ul#nav{background: #000;overflow: hidden;}
+	#nav li{
+		float: left;
+		width: 100px;
+		text-align: center;
+		color: white;
+		line-height: 30px;
+		cursor: pointer;
+	} 
+	#content{
+		overflow: hidden;
+	}
+	#content ul{width: 100%;display: block;}
+	#content li{
+		width: 100%;
+		text-align: left;
+		line-height: 30px;
+		padding: 0 10px;
+	}
+	#nav .current{
+		background: white;
+		color: black;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var oli = document.getElementById("nav").getElementsByTagName("li");
+		var content = document.getElementById("content").getElementsByTagName("ul");
+		var changDisplay = function(value){
+			for(var n = 0; n < oli.length; n++)oli[n].className = "";
+			oli[value].className = "current";
+			for(var n = 0; n < content.length; n++)content[n].style.display = "none";
+			content[value].style.display = "block";
+		}
+		for(var i = 0; i < oli.length; i++){
+			oli[i].index = i;
+			oli[i].onclick = function(){
+				changDisplay(this.index);
+			}
+		}
+	}
+
+	</script>
+</head>
+<body>
+	<div class="wrapper">
+		<ul id="nav">
+			<li class="current">第一课</li>
+			<li>第二课</li>
+			<li>第三课</li>
+		</ul>
+		<div id="content">
+			<ul >
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+				<li>网页特效原理分析</li>
+			</ul>
+			<ul style="display:none">
+				<li>提示框效果</li>
+				<li>提示框效果</li>
+				<li>提示框效果</li>
+				<li>提示框效果</li>
+				<li>提示框效果</li>
+			</ul>
+			<ul style="display:none">
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+				<li>引入函数</li>
+			</ul> 
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>简易的时钟</title>
+	<style type="text/css">
+	body, div, span{
+		padding: 0;margin: 0;
+	}
+	#clock{
+		margin: 10 auto;
+		text-align: center;
+		width: 300px;
+		background: #1a1a1a;
+		padding: 20px 0;
+		color: #fff;
+	}
+	span{
+		background: #fff;
+		border:2px solid #b4b4b4;
+		width: 80px;
+		margin: 0 10px;
+		padding: 0 10px;
+		color: #000;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var ospan = document.getElementsByTagName("span");
+		setInterval(getTimes, 1000);
+		getTimes();
+		function getTimes(){
+			var aDate = new Date();
+			var oDate = [aDate.getHours(), aDate.getMinutes(), aDate.getSeconds()];
+			for(var p in oDate){
+				ospan[p].innerHTML = format(oDate[p]);
+			}
+		}
+		function format(a){
+			return a.toString().replace(/^(\d)$/, "0$1");
+
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="clock">
+		<span></span>点<span></span>分<span></span>秒
+	</div>
+</body>
+</html>

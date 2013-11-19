@@ -1,0 +1,72 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>倒计时时钟</title>
+	<style type="text/css">
+	body, div, span, button{
+		padding: 0; margin:0;
+	}
+	body{color:#fff;font:16px/1.5 \5fae\8f6f\96c5\9ed1;}
+	.clock{
+		width: 300px;
+		margin: 10px auto;
+		background: #000;
+		text-align: center;
+		color: white;
+		padding: 20px 10px;
+	}
+	span{
+		width: 80px;
+		color: #000;
+		border:2px solid #b4b4b4;
+		margin: 0px 10px;
+		padding: 0 10px;
+		line-height: 2;
+		background: white;
+	}
+	button{
+		border:0;
+		background: url("http://js.fgm.cc/learn/lesson3/img/btn-1.png") no-repeat 0 0;
+		width: 283px;height: 50px;
+		margin-top: 20px;
+		outline: none;
+		text-indent: -9999;
+	}
+	button.cancel{
+		background-position: 0 -50px;
+		
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var obutton = document.getElementsByTagName("button")[0];
+		var timer = null;
+		obutton.onclick = function(){
+			this.className == "" ? (timer = setInterval(updateTime, 1000), updateTime()) : (clearInterval(timer));
+			/*js中逗号的作用为先执行逗号前的语句，但是赋值则选取最后的值*/
+			this.className = this.className == ""? "cancel" : "";
+		}
+		function format(a){
+			return a.toString().replace(/^(\d)$/, "0$1");
+		}
+		function updateTime(){
+			var ospan = document.getElementsByTagName("span");
+			var oRamain = ospan[0].innerHTML.replace(/^0/, '')*60 + parseInt(ospan[1].innerHTML.replace(/^0/, ''));
+			if(oRamain <= 0){
+				clearInterval(timer);
+				return;
+			}
+			oRamain --;
+			ospan[0].innerHTML = format(parseInt(oRamain / 60));
+			ospan[1].innerHTML = format(parseInt(oRamain % 60));
+		}
+	}
+	</script>
+</head>
+<body>
+	<div class="clock">
+		<span>01</span>分钟<span>00</span>秒
+		<button>取消</button>
+	</div>
+</body>
+</html>

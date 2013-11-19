@@ -1,0 +1,116 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>数组练习</title>
+	<style type="text/css">
+	div{
+		color: green;
+		background: #f0f0f0;
+		padding: 10px 15px;
+		margin: 12px 0;
+		border:1px dotted #333;
+		font:12px/1.5 Courier New;
+		word-wrap:break-word;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var oDiv = document.getElementsByTagName("div");
+		var oinput = document.getElementsByTagName("input");
+		var ob = oc = true;
+		var aTmp = [];
+
+		//删除/添加第一项
+		oinput[0].onclick = function(){
+			aTmp = getArray(oDiv[0].innerHTML);
+			ob ? (aTmp.shift(), this.value = this.value.replace("删除", "添加"), ob = false) : (aTmp.unshift("January(1)"), this.value = this.value.replace("添加", "删除"), ob = true);
+			oDiv[0].innerHTML = aTmp.join();
+		}
+
+		//删除/添加最后一项
+		oinput[1].onclick = function(){
+			aTmp = getArray(oDiv[0].innerHTML);
+			oc ? (aTmp.pop(), this.value = this.value.replace("删除","添加"), oc = false) : (aTmp.push("December(12)"), this.value = this.value.replace("添加", "删除"), oc = true);
+			oDiv[0].innerHTML = aTmp.join();
+		}
+		/*
+		shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。 
+		如果数组是空的，那么 shift() 方法将不进行任何操作，返回 undefined 值。
+
+		unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+		eg: arrayObject.unshift("hah","hahh");
+		请注意，unshift() 方法不创建新的创建，而是直接修改原有的数组。
+		注释：unshift() 方法无法在 Internet Explorer 中正确地工作！ 
+
+		push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。 
+		pop() 方法用于删除并返回数组的最后一个元素。 
+		*/
+
+		//复制, concat()方法
+		oinput[2].onclick = function(){
+			aTmp = getArray(oDiv[1].innerHTML);
+			oDiv[1].innerHTML = aTmp.concat(aTmp).toString().replace(/\s/g, '');
+			/*replace(/\s/g, '')替换空格*/
+		}
+
+		//还原, 利用数组的 length 特点
+		oinput[3].onclick = function(){
+			aTmp = getArray(oDiv[1].innerHTML);
+			aTmp.length = 10;
+			oDiv[1].innerHTML = aTmp.toString().replace(/\s/g, '');
+		}
+
+		oinput[4].onclick = function(){
+			aTmp = ["red","green","blue","white","yellow","black","brown"];
+			oDiv[2].innerHTML = aTmp.join();
+		}
+
+		oinput[5].onclick = function(){
+			aTmp = getArray(oDiv[2].innerHTML);
+			aTmp.splice(0, 3);
+			/*splice 返回的是被删除的数组,而能真正地修改数组*/
+			oDiv[2].innerHTML = aTmp.join();
+		}
+
+		oinput[6].onclick = function(){
+			aTmp = getArray(oDiv[2].innerHTML);
+			aTmp.splice(1,2);
+			oDiv[2].innerHTML = aTmp.join();
+		}
+
+		oinput[7].onclick = function(){
+			aTmp = getArray(oDiv[2].innerHTML);
+			aTmp.splice(1,0,"orange", "purple");
+			oDiv[2].innerHTML = aTmp.join();
+		}
+
+		oinput[8].onclick = function(){
+			aTmp = getArray(oDiv[2].innerHTML);
+			aTmp.splice(1,2,"#009900", "#0000ff");
+			oDiv[2].innerHTML = aTmp.join();
+		}
+
+		function getArray(str){
+			aTmp.length = 0;
+			str = str.split(",");
+			for(var i in str)aTmp.push(str[i]);
+			return aTmp;
+		}
+	}
+	</script>
+</head>
+<body>
+	<div>January(1),February(2),March(3),April(4),May(5),June(6),July(7),Aguest(8),September(9),October(10),November(11),December(12)</div>
+	<input type="button" value="删除January(1)">
+	<input type="button" value="删除December(12)">
+	<div>0,1,2,3,4,5,6  ,7,8,9</div>
+	<input type="button" value="复制">
+	<input type="button" value="还原">
+	<div>red,green,blue,white,yellow,black,brown</div>
+	<input type="button" value="还原">
+	<input type="button" value="删除前三项">
+	<input type="button" value="删除第二至第三项">
+	<input type="button" value="在第二项之后插入(orange,black)">
+	<input type="button" value="替换第二项和第三项">
+</body>
+</html>

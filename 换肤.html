@@ -1,0 +1,84 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>换肤</title>
+	<style type="text/css">
+	body{background: #888;font:12px/1.5 Tahoma;}
+	body, ul, li{
+		padding: 0;
+	}
+	#outer{
+		width: 500px;
+		margin: 0 auto;
+		text-align: center;
+		overflow: hidden;
+		zoom:1;
+	}
+
+	#skin, #nav{
+		overflow: hidden;
+		zoom:1;
+	}
+	#skin{margin: 10px 0;}
+	li{
+		list-style-type: none;
+		float: left;
+		overflow: hidden;
+	}
+	#skin li{
+		width: 6px;height: 6px;
+		margin-right: 6px;
+		cursor: pointer;
+		text-indent: -99999px;
+		border-width: 4px;
+		border-style: solid;
+	}
+	#red{background: red; border-color: red;}
+	#green{background: green; border-color: green;}
+	#black{background: black; border-color: black;}
+	#nav{border:1px solid #fff;background: green;}
+	#nav li{
+		display: block;
+		width: 82px;
+		border-right:1px solid #fff;
+		line-height: 25px;
+	}
+	#nav li.last{
+		width: 83px;
+		border-right-width: 0;
+	}
+	#skin li.current{background: white;}
+	</style>
+	<link rel="stylesheet" type="text/css" href="css/green.css">
+	<script type="text/javascript">
+	window.onload = function(){
+		var olink = document.getElementsByTagName("link")[0];
+		var oskin = document.getElementById("skin").getElementsByTagName("li");
+		for(var i = 0; i < oskin.length; i++){
+			oskin[i].onclick = function(){
+				for(var p in oskin) oskin[p].className = "";
+				this.className = "current";
+				olink.href = "css/" + this.id + ".css";
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="outer">
+		<ul id="skin">
+			<li id="red">红色</li>
+			<li id="green" class="current">绿色</li>
+			<li id="black" >黑色</li>
+		</ul>
+		<ul id="nav">
+			<li><a href="#">新闻</a></li>
+			<li><a href="#">娱乐</a></li>
+			<li><a href="#">体育</a></li>
+			<li><a href="#">电影</a></li>
+			<li><a href="#">音乐</a></li>
+			<li class="last"><a href="#">旅游</a></li>
+		</ul>
+	</div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>提示框效果</title>
+	<style type="text/css">
+	body, div, h4, ul, li{
+		margin: 0;padding: 0;
+	}
+	.wrapper{
+		width: 560px;
+		background: #888;
+		margin: 0 auto;
+		text-align: center;
+		padding: 0 0 10px 10px;
+	}
+	h4{
+		line-height: 30px;
+		margin-top: 10px;
+	}
+	ul{list-style-type: none;zoom:1;}
+	ul:after{
+		content: ".";
+		display: block;
+		height: 0;
+		clear: both;
+		visibility: hidden;
+	} 
+	/* 这里为什么不用 overflow:hidden; 因为 overflow的话就会将突出了的img hidden掉，好的办法是写一个像上面的 ul:after */
+	li{
+		position: relative;
+		float: left;
+		border:1px solid #000; 
+		margin: 10px 10px 0 0;
+		display: inline;
+	}
+	li a{
+		width: 80px;height: 80px;
+		color: #666;
+		background: #f0f0f0;
+		text-decoration: none;
+		padding: 10px;
+		display: block;
+	}
+	li a strong{
+		display: block;
+	}
+	li img{
+		position: absolute;
+		left: -14px; top: -14px;
+		border:2px solid #999;
+		display: inline;
+	}
+	.z_index{
+		z-index: 999;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var oa = document.getElementsByTagName("a");
+		var oimg = document.getElementsByTagName("img");
+		var oli = document.getElementsByTagName("li");
+		for(var i = 0; i < oli.length; i++){
+			oa[i].index = i;
+			oimg[i].index = i;
+			oa[i].onmouseover = function(){
+				oimg[this.index].style.display = "block";
+				oli[this.index].className = "z_index";
+			}
+			oa[i].onmouseout = function(){
+				oimg[this.index].style.display = "none";
+				oli[this.index].className = "";
+			}
+			oimg[i].onmouseover = function(){
+				oimg[this.index].style.display = "block";
+				oli[this.index].className = "z_index";
+			}
+			oimg[i].onmouseout = function(){
+				oimg[this.index].style.display = "none";
+				oli[this.index].className = "";
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+	<div class="wrapper">
+		<h4>名车车标展示-鼠标移过显示车标</h4>
+		<ul>
+	        <li class="">
+	            <a href="javascript:;" title="BMW 宝马汽车"><strong>BMW</strong>宝马汽车</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="BMW 宝马汽车" style="display: none;" >
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Alfa Romeo 阿尔法-罗米欧"><strong>Alfa Romeo</strong> 阿尔法-罗米欧</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Alfa Romeo 阿尔法-罗米欧" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Skoda 斯柯达"><strong>Skoda</strong> 斯柯达</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Skoda 斯柯达" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Volkswagen 大众汽车"><strong>Volkswagen</strong> 大众汽车</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Volkswagen 大众汽车" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Saab 萨布牌轿"><strong>Saab</strong> 萨布牌轿车</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Saab 萨布牌轿" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Lamborghini 兰博基尼"><strong>Lamborghini</strong> 兰博基尼</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Lamborghini 兰博基尼" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Porsche 保时捷"><strong>Porsche</strong> 保时捷</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Porsche 保时捷" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Peugeot 标致"><strong>Peugeot</strong> 标致</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Peugeot 标致" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Mercedes1 梅赛德斯 奔驰"><strong>Mercedes1</strong> 梅赛德斯 奔驰</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Mercedes1 梅赛德斯 奔驰" style="display: none;">
+	        </li>
+	        <li class="">
+	            <a href="javascript:;" title="Buick 别克汽车"><strong>Buick</strong> 别克汽车</a>
+	            <img src="http://js.fgm.cc/learn/lesson2/img/1.jpg" alt="Buick 别克汽车" style="display: none;">
+	        </li>
+    	</ul>
+	</div>
+</body>
+</html>
