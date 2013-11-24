@@ -1,0 +1,100 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>移动效果(按轨迹移动)</title>
+	<style type="text/css">
+	div{
+		background: url("http://js.fgm.cc/learn/lesson7/img/1.gif") no-repeat;
+		position: absolute;
+		width: 66px;
+		height: 45px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var people = document.getElementsByTagName("div")[0];
+		var currentX = people.offsetLeft, currentY = people.offsetTop;
+		var button1 = document.getElementsByTagName("button")[0];
+		var button2 = document.getElementsByTagName("button")[1];
+		var style = null;
+		var timer = null;
+		console.log("x:" + currentX + " y:" + currentY);
+		button1.onclick = function(){
+			style = 1;
+			clearInterval(timer);
+		}
+		button2.onclick = function(){
+			style = 2;
+			clearInterval(timer);
+		}
+		document.onclick = function(event){
+			clearInterval(timer);
+			var value = event.button;
+			var e = event || window.event;
+			if(value == 0){
+				startMove(e);
+			}
+		}
+		function startMove(event){
+			if(style == 1){
+				var targetX = event.clientX;
+				var targetY = event.clientY;
+				clickMove(targetX, targetY);
+			}
+			if(style == 2){
+				dragMove();
+			}
+		}
+		function clickMove(x, y){
+			console.log(x + " " + y);
+			timer = setInterval(function(){
+				currentX = people.offsetLeft; currentY = people.offsetTop;
+				var speed = (x - currentX)/10;
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+				people.offsetLeft == x ? (clearInterval(timer)) : (people.style.left = people.offsetLeft + speed + "px");
+				var speed = (y - currentY)/10;
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+				people.offsetTop == y ? (clearInterval(timer)) : (people.style.top = people.offsetTop + speed + "px");
+			}, 30);
+		}
+		var state = false;
+
+		function dragMove(){
+				var track = []
+				document.onmousedown = function(event){
+					var e = event || window.event;
+					track.push({x : e.clientX, y:e.clientY})
+					state = true;
+				}
+				document.onmousemove = function(event){
+					if(state){
+						var e = event ||window.event;
+						track.push({x : e.clientX, y:e.clientY});
+					}
+				}
+				document.onmouseup = function(){
+					state = false;
+					timer = setInterval(function(){
+						if(track.length == 0){
+							clearInterval(timer);
+							track = [];
+							return;
+						}
+						people.style.left = track[0].x + "px";
+						people.style.top = track[0].y + "px";
+						track.shift();
+					},30);
+				}
+			
+			
+		}
+	}
+	</script>
+</head>
+<body>
+	<button>根据鼠标点击位置移动</button>
+	<button>根据标鼠标轨迹移动</button>
+	<h2>请点击按钮激活功能</h2>
+	<div></div>
+</body>
+</html>

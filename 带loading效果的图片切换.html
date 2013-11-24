@@ -1,0 +1,177 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>带loading效果的图片切换</title>
+	<style type="text/css">
+	body, div, span, img{
+		padding: 0; margin: 0;
+	}
+	body{
+		background: #000;
+	}
+	#big{
+		height:400px;min-height:400px;
+		height: auto; !important;
+		margin: 20px auto;
+		width: 800px;
+		position: relative;
+		text-align: center;
+	}
+	#big.loading{
+		background: url("http://js.fgm.cc/learn/lesson7/img/loading.gif") no-repeat center center;
+	}
+	#marks_R, #marks_L{
+		width: 400px;
+		height: 100%;
+		cursor: pointer;
+		position: absolute;
+		background: #f0f0f0;
+		opacity: 0;
+		filter:alpha(opacity=0);
+		top: 0;
+	}
+	#marks_L{left: 0;}
+	#marks_R{right: 0;}
+	#btn_L, #btn_R{
+		background: url("http://js.fgm.cc/learn/lesson7/img/btn.png") no-repeat;
+		cursor: pointer;
+		width: 39px;
+		height: 80px;
+		top:50%;
+		margin-top: -40px;
+		position: absolute;
+		text-indent: -99999px;
+		opacity: 0;
+	}
+	#btn_L{
+		background-position: 0 0;
+		left: 10px;
+	}
+	#btn_R{
+		background-position: -39px 0;
+		right: 10px;
+	}
+	#title{
+		position: absolute;
+		top: 0px;
+		width: 100%;
+		background:#000;
+		opacity: 0.7;
+		height: 50px;
+		line-height: 50px;
+		font-size: 20px;
+		color: #fff;
+	}
+	#title span{
+		opacity: 0;
+		filter:alpha(opacity=0);
+	}
+	</style>
+	<script type="text/javascript">
+	function getStyle(obj, attr){ return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj, null)[attr]}
+	window.onload = function(){
+		var obig = document.getElementById("big");
+		var omark_l = document.getElementById("marks_L");
+		var omark_r = document.getElementById("marks_R");
+		var obtn_l = document.getElementById("btn_L");
+		var obtn_r = document.getElementById("btn_R");
+		var otitle = document.getElementById("title");
+		var ospan = obig.getElementsByTagName("span")[0];
+		var inow = 0;
+		var aData = [
+						{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/106/238/825/53706421.jpg", "title" : "7月26日，吊车将事故现场的车头残片吊至大型运输车辆上。"},
+						{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/105/238/825/53706420.jpg", "title" : "7月26日，一辆大卡车准备驶离事故现场。"},
+						{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/101/238/825/53706416.jpg", "title" : "7月26日，工人在给最后一节车厢盖上彩条布，准备运离现场。"},
+						{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/99/238/825/53706414.jpg", "title" : "7月26日，一名工人在事故现场最后一节车厢上作业。"},
+						{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/100/238/825/53706415.jpg", "title" : "7月26日，工人在给最后一节车厢盖上彩条布，准备运离现场。"}
+					]; 
+		omark_l.onmouseover = obtn_l.onmouseover =function(){
+			startMove(obtn_l, "opacity", 100);
+		}
+		omark_l.onmouseout = obtn_l.onmouseout = function(){
+			startMove(obtn_l, "opacity", 0);
+		}
+		omark_r.onmouseover = obtn_r.onmouseover = function(){
+			startMove(obtn_r, "opacity", 100);
+		}
+		omark_r.onmouseout = obtn_r.onmouseout = function(){
+			startMove(obtn_r, "opacity", 0);
+		}
+		function startMove(obj, attr, target, fn){
+			clearInterval(obj.timer);
+			obj.timer = setInterval(function(){
+				moveTo(obj, attr, target,fn);
+			},30);
+		}
+		function moveTo(obj, attr, target,fn){
+			var icurrent = parseFloat(getStyle(obj, attr));
+			if(attr == "opacity"){
+				icurrent = icurrent*100;
+			}
+			var ispeed = (target - icurrent)/5;
+			ispeed = ispeed > 0 ? Math.ceil(ispeed) : Math.floor(ispeed);
+			if(target == icurrent){
+				clearInterval(obj.timer);
+					fn && fn();
+			}else{
+				if(attr == "opacity"){
+					obj.style.filter = "alpha(opacity=" + (icurrent + ispeed) + ")";
+					obj.style.opacity = (icurrent + ispeed) / 100;
+				}else{
+					obj.style[attr] = icurrent + ispeed + "px";
+				}
+			}
+		}
+		obtn_l.onclick = function(){
+			if(--inow < 0 ){
+				alert("前面已经没有图片了");inow = 0;
+				return false;
+			}
+			loadImg();
+			console.log(inow);
+		}
+		obtn_r.onclick = function(){
+			if(++inow > (aData.length-1)){
+				alert("后面已经没有图片了");inow = aData.length-1;
+				return false;
+			}
+			loadImg();
+		}
+		loadImg();
+		function loadImg(){
+			obig.className = "loading";
+			console.log(ospan);
+			ospan.style.opacity = otitle.style.height = 0;
+			ospan.style.filter = "alpha(opacity=" + 0 + ")";
+			var oimg = obig.getElementsByTagName("img");
+			oimg[0] && obig.removeChild(oimg[0]);
+			var otemp = document.createElement("img");
+			var newImg = new Image();
+			newImg.src = aData[inow].imgSrc;
+			newImg.onload = function(){
+				obig.className = "";
+				otemp.src = this.src;
+				obig.appendChild(otemp);
+				otemp.style.width = (otemp.offsetWidth > 800 ? 800 : otemp.offsetWidth) + "px";
+				ospan.innerHTML = aData[inow].title;
+				startMove(otitle, "height", 50, function(){
+					startMove(otitle.childNodes[1], "opacity", 100);
+				});
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="big">
+		<div id="marks_L">1</div>
+		<div id="marks_R">2</div>
+		<div id="btn_L">左</div>
+		<div id="btn_R">右</div>
+		<div id="title">
+			<span>7月26日,一俩大卡车准备驶离事故现场</span>
+		</div> 
+		<!-- <img src="http://img1.gtimg.com/news/pics/hv1/106/238/825/53706421.jpg" style="width: 800px; height: 515px;">  -->
+	</div>
+</body>
+</html>

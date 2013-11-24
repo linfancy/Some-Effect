@@ -1,0 +1,226 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>自定多级右键菜单</title>
+	<style type="text/css">
+	body, div, ul, li{
+		padding: 0;margin:0;
+	}
+	body{
+		font: 12px/1.5 宋体;
+	}
+	body, html{
+		height: 100%;
+		overflow: hidden;
+	}
+	#rightMenu{
+		left:-999999px;
+		top:-999999px;
+		position: absolute;
+	}
+	#rightMenu ul{
+		box-shadow: 2px 2px 2px rgba(0,0,0,.6);
+		border: 1px solid #979797;
+		float: left;
+		list-style-type: none;
+		background: url("http://js.fgm.cc/learn/lesson6/img/line.png") repeat-y 24px 0 #F1F1F1;
+		padding: 2px;
+	}
+	#rightMenu ul li{
+		float: left;
+		display: block;
+		height: 24px;
+		line-height: 24px;
+		cursor: pointer;
+		clear: both;
+		white-space: nowrap;
+		padding:0 30px;
+	}
+	#rightMenu ul li a{
+		text-decoration: none;
+		color: #000;
+	}
+	#rightMenu ul li.sub{
+		background: url("http://js.fgm.cc/learn/lesson6/img/arrow.png") no-repeat right 9px;
+	}
+	#rightMenu ul li.active{
+		background-color:#f1f3f6;border-radius:3px;border:1px solid #aecff7;height:22px;line-height:22px;background-position:right -8px;padding:0 29px;
+	}
+	#rightMenu ul ul{
+		position: absolute;
+		display: none;
+	}
+	</style>
+	<script type="text/javascript">
+
+	var getOffset = {
+		top : function(obj){
+			return obj.offsetTop += obj.offsetParent?arguments.callee(obj.offsetParent):0; 
+		},
+		left : function(obj){
+			return obj.offsetLeft += obj.offsetParent ? arguments.callee(obj.offsetParent) : 0;
+		}
+	};
+	window.onload = function(){
+		var odiv = document.getElementsByTagName("div")[0];
+		var oul = document.getElementsByTagName("ul");
+		var oli = document.getElementsByTagName("li");
+		var hideTimer = showTimer = null;
+		odiv.style.display = "none";
+		var state = false;
+
+		document.oncontextmenu = function(event){
+			var e = event || window.event;
+			odiv.style.top = e.clientY + "px";
+			odiv.style.left = e.clientX + "px";
+			var maxWidth = document.documentElement.clientWidth - odiv.offsetWidth;
+			var maxHeight = document.documentElement.clientHeight - odiv.offsetHeight;
+			odiv.offsetTop > maxHeight && (odiv.style.top = maxHeight + "px");
+			odiv.offsetLeft > maxWidth && (odiv.style.left = maxWidth + "px");
+			state ? state = false : (state = true);
+			odiv.style.display = "block";
+			setWidth(oul[0]);
+			return false;
+		}
+		for(var i = 0; i < oli.length; i++){
+
+			oli[i].getElementsByTagName("ul")[0]&&(oli[i].className = "sub");
+
+			oli[i].onmouseover = function(){
+				var othis = this;
+				othis.className += " active";
+				var aul = othis.getElementsByTagName("ul");
+				if(aul[0]){
+					clearTimeout(hideTimer);
+					showTimer = setTimeout(function(){
+						for(var j = 0; j < othis.parentNode.children.length; j++){
+							othis.parentNode.children[j].getElementsByTagName("ul")[0]&&(othis.parentNode.children[j].getElementsByTagName("ul")[0].style.display = "none");
+						}
+						aul[0].style.display = "block";
+						aul[0].style.top = othis.offsetTop + "px";
+						aul[0].style.left = othis.offsetWidth + "px";
+						setWidth(aul[0]);
+
+						var maxWidth = document.body.clientWidth - aul[0].offsetWidth;
+						var maxHeight = document.body.clientHeight - aul[0].offsetHeight;
+
+						console.log(maxWidth + " " + maxHeight);
+
+						maxWidth < getOffset.left(aul[0]) && (aul[0].style.left = -aul[0].clientWidth + "px");
+						maxHeight < getOffset.top(aul[0]) && (aul[0].style.top = -aul[0].clientHeight + othis.offsetTop + othis.clientHeight + "px");
+
+					},300);
+				}
+			}
+			oli[i].onmouseout = function(){
+				var othis = this;
+				othis.className = othis.className.toString().replace(/active/, "");
+				clearTimeout(showTimer);
+				hideTimer = setTimeout(function(){
+					for(var j = 0; j < othis.parentNode.children.length; j++){
+						othis.parentNode.children[j].getElementsByTagName("ul")[0]&& (othis.parentNode.children[j].getElementsByTagName("ul")[0].style.display = "none");
+					}
+				},300);
+			}
+		}
+		
+		/*
+		setTimeout 与 setInterval的区别!!!
+		这两者是有区别的!!
+		setTimeout 是在设定时间之后执行, 而setInterval 是在每隔一段时间执行,
+		setTimeout方法是定时程序，也就是在什么时间以后干什么。干完了就拉倒。
+		setInterval方法则是表示间隔一定时间反复执行某操作。 
+
+		这里不可使用setInterval 因为在调用setInterval 执行函数过程当中, clearInterval并没有执行, showTimer 与 hideTimer会在同一时间段执行,造成闪烁的现象,
+		
+		如果用setTimeout实现setInerval的功能，就需要在执行的程序中再定时调用自己才行。如果要清除计数器需要根据使用的方法不同，调用不同的清除方法： 
+		function startShow()
+	    {
+	      liujincai.innerHTML=liujincai.innerHTML + " " + (intvalue ++).toString();
+	      timer2=window.setTimeout("startShow()",2000);
+	    } 
+		*/
+		
+
+		document.onclick = function(event){
+			var e = event || window.event;
+			var value = e.button;
+			if(value !=2 && value !=3){
+				state ? (state = false, odiv.style.left = -99999+"px", odiv.style.top = -999999+"px") : (state = true);
+				odiv.style.display = "none";
+			}
+		}
+
+		function setWidth(obj){
+			var maxWidth = 0;
+			for(var i = 0; i < obj.children.length; i++){
+				var oli = obj.children[i];
+				var iwidth = oli.clientWidth - parseInt(oli.currentStyle ? oli.currentStyle["paddingLeft"] : getComputedStyle(oli,null)["paddingLeft"])*2;
+				if(iwidth > maxWidth)maxWidth = iwidth;
+			}
+			for(var i = 0; i < obj.children.length; i++)obj.children[i].style.width = maxWidth + "px";
+		}
+
+		/*
+		clientWidth:元素内容区的宽度加上左右padding的值，如果有滚动条，不包括滚动条的宽度
+		clientHieght: 元素内容区的高度加上上下padding的值，如果有滚动条，不包括滚动条的高度
+		clientLeft:元素左边框的宽度，如果没有边框，就是0
+		clientTop:元素上边框的宽度，如果没有边框，就是0
+
+		scrollWidth:元素的滚动宽度，不包括元素边框和滚动条宽度，即元素边框和滚动条之间的宽度加上延伸到元素外面的部分
+		scrollHeight:元素的滚动高度，不包括元素的边框盒滚动条宽度，即即元素边框和滚动条之间的高度加上延伸到元素外面的部分
+		scrollLeft:元素水平滚动的距离
+		scrollTop: 元素垂直滚动的距离
+
+		offsetWidth:元素从左边框到右边框的宽度
+		offsetHeight: 元素从上边框到下边框的高度
+		offsetLeft:元素到offsetParent的偏移量
+		offsetTop: 元素到offsetParent的偏移量
+
+		1 当子框(也就是这里的银色div框，id为div1_1)的父元素有定位时(可能是相对定位，或者绝对定位，或者固定定位),那么offsetParent就是这个定位的父元素，而不管这个子框的定位情况(可能定位，也可能没定位)。
+
+		2 而当着个子框有定位，而它的父元素没有定位时，分成子框相对定位和绝对定位(固定定位也一样)两种情况:
+
+		(1) 子框相对定位时，父元素没有定位，那么offsetParent在火狐中是html元素左上角(虽然代码结果显示的是body元素，但是通过计算发现不是),而在IE8中offsetParent是相对于整个文档左上角(并不是html元素，而是html元素外面空白区域的左上角);
+
+		(2) 若子框是绝对定位，父元素没有定位，那么在火狐和IE8中都是相对于整个文档的左上角。
+
+		(3) 若子框和父元素都没定位，那么offsetParent在火狐中是html元素，而IE8中offsetParent是整个文档
+
+		在火狐中，offsetLeft，offsetTop是从父元素左上角(是左边框和上边框同padding交界的位置)到子框左上角(左边框和上边框和外边距margin交界的位置)的距离；
+
+		在IE8中，offsetLeft，offsetTop是从父元素的左上角(是左边框和上边框同外边距margin交界的位置)到子边框左上角(同火狐)的距离
+		*/
+	}
+	</script>
+</head>
+<body>
+	<div id="rightMenu">
+		<ul>
+			<li>javascript 学习</li>
+			<li>
+				第一课
+				<ul>
+					<li><a href="#">网页特效原理分析</a></li>
+					<li><a href="#">网页特理分析</a></li>
+					<li><a href="#">网页特效原</a></li>
+				</ul>
+			</li>
+			<li>第二课
+				<ul>
+					<li><a href="#">网页特效原理分析</a>
+						<ul>
+							<li><a href="#">网页特效原理分析</a></li>
+							<li><a href="#">网页特理分析</a></li>
+							<li><a href="#">网页特效原</a></li>
+						</ul>
+					</li>
+					<li><a href="#">网页特理分析</a></li>
+					<li><a href="#">网页特效原</a></li>
+				</ul>
+			</li>
+			<li>第三课</li>
+		</ul>
+	</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>仿腾讯微博的效果</title>
+	<style type="text/css">
+	body, html, div, h2, form, p, span, ul, li{
+		padding: 0; margin: 0;
+	}
+	body{
+		background: #000;
+		color: #333;
+		font: 12px/1.5 宋体;
+	}
+	.msgBox{
+		width: 500px;
+		background: #fff;
+		margin: 10 auto;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+	.msgBox form{
+		padding: 0 20px 15px;
+	}
+	.msgBox form div{
+		margin-top:10px;
+		color: #999;
+		overflow: hidden;
+	}
+	.msgBox .username{
+		height: 30px;
+		width: 200px;
+	}
+	.msgBox .conBox{
+		height: 65px;
+		width: 448px;
+		overflow: auto;
+		resize:none;
+	}
+	.msgBox .username, .msgBox .conBox{
+		background: url("http://js.fgm.cc/learn/lesson6/img/inputBG.png") repeat-x;
+		border: 1px solid #D0D0D0;
+		border-radius: 6px;
+		float: left;
+		padding: 3px 5px;
+		font: 14px/1.5 arial;
+		color: #777;
+	}
+	.msgBox form p{
+		float: left;
+		margin-left: 10px;
+	}
+	.msgBox form p img{
+		width: 30px;
+		height: 30px;
+	}
+	.msgBox form p img.current{
+		border: 1px red solid;
+	}
+	.msgBox .tr{
+		overflow: hidden;
+	}
+	.msgBox .tr p{
+		float: right;
+		line-height: 30px;
+	}
+	.msgBox .tr .maxNum{
+		font: 26px/30px arial;
+		padding: 0 5px;
+	}
+	.msgBox .tr p .sendBtn{
+		background: url("http://js.fgm.cc/learn/lesson6/img/btn.png") no-repeat;
+		border: 0 none;
+		cursor: pointer;
+		height: 30px;
+		margin-left: 10px;
+		width: 112px;
+	}
+	.msgBox .tr p .sendBtn:hover{
+		background-position: 0 -30px;
+	}
+	.msgBox .list{
+		padding: 10px;
+	}
+	.msgBox .list h3{
+		background: #E3EAEC;
+		border: 1px solid #DEE4E7;
+		font-size: 14px;
+		font-weight: 400;
+		height: 33px;
+	}
+	.msgBox .list h3 span{
+		background: #fff;
+		display: inline-block;
+		margin-left: 6px;
+		line-height: 28px;
+		margin-top: 6px;
+		padding: 0 15px;
+	}
+	.msgBox .list ul{
+		list-style-type: none;
+	}
+	.msgBox .list ul li{
+		border-bottom: 1px dashed #D8D8D8;
+		background: #fff;
+		clear: both;
+		overflow: hidden;
+		padding: 10px 0;
+		width: 100%;
+	}
+	.msgBox .list ul li .userPic{
+		margin-left: 10px;
+		width: 50px;
+		height: 50px;
+		float: left;
+		display: inline;
+		border-radius: 3px;
+		border: 1px solid #CCC;
+	}
+	.msgBox .list ul li .content{
+		margin-left: 10px;
+		width: 400px;
+		word-wrap:break-word;
+		font-size: 14px;
+		float: left;
+	}
+	.msgBox .list ul li .name{
+		display: inline;
+		padding-right: 5px;
+	}
+	.msgBox .list ul li .msgInfo{
+		display: inline;
+		word-wrap:break-word;
+	}
+	/*两个div 需要为display:inline 达到的效果如图*/
+	.msgBox .list ul li .times{
+		color: #889DB6;
+		font: 12px/18px arial;
+		margin-top: 5px;
+		overflow: hidden;
+	}
+	.msgBox .list ul li .times span{
+		float: left;
+	}
+	.msgBox .list ul li .times a{
+		float: right;
+		color: #889DB6;
+		display: none;
+	}
+	.msgBox .list ul li .times .del{
+		display: block;
+	}
+	</style>
+	
+	<script type="text/javascript">
+	/*获取id, class, tagname*/
+	var get = {
+		byId : function(name){
+			return typeof name === "string" ? document.getElementById(name) : name;
+		},
+		byTag : function(name, parent){
+			return (parent || document).getElementsByTagName(name);
+		},
+		byClass : function(name, parent){
+			var aclass = [];
+			var regClass = new RegExp("(^|)" + name + "(|$)");
+			var aelem = this.byTag("*", parent);
+			for(var i = 0; i < aelem.length; i++)regClass.test(aelem[i].className)&&(aclass.push(aelem[i]));
+			return aclass;
+		}
+	};
+	/*事件绑定*/
+	var EventUtil = {
+		addHandler : function(oelement, oevent, fn){
+			oelement.addEventListener ? 
+				oelement.addEventListener(oevent, fn, false) : 
+				(oelement["_" + oevent + fn] = fn, oelement[oevent + fn] = function(){oelement["_" + oevent + fn]}, oelement.attachEvent("on"+oevent, oelement[oevent+fn]))
+		},
+		removeHandle : function(oelement, oevent, fn){
+			oelement.removeEventListener ? oelement.removeEventListener(oevent, fn, false) : 
+				oelement.detachEvent("on" + oevent, oelement[oevent+fn]);
+		},
+		addLoadHandler : function(fn){
+			this.addHandler(window, "load", fn);
+		}
+	};
+
+	/*设置CSS样式,读取css样式*/
+	function css(oelement, attr, value){
+		switch(arguments.length){
+			case 2 : 
+				if(typeof arguments[1] == "object"){
+					for(var i in attr)
+						i == "opacity" ? (oelement.style["filter"] = "alpha(opacity=" + attr[i] + ")", (oelement.style[i] = attr[i]/100) ): (oelement.style[i] = attr[i]);
+				}else{
+					return oelement.currentStyle ? oelement.currentStyle[attr] : getComputedStyle(oelement, null)[attr];
+				}
+				break;
+			case 3 :
+				attr === "opacity" ? (oelement.style.filter = "alpha(opacity=" + value + ")",oelement.style[attr] = value/100 ): (oelement.style[attr] = value);
+				break;
+		}
+	};
+
+	EventUtil.addLoadHandler(function(){
+		var msgBox = get.byClass("msgBox")[0];
+		var username = get.byClass("username", msgBox)[0];
+		var conBox = get.byClass("conBox", msgBox)[0];
+		var sendBtn = get.byClass("sendBtn", msgBox)[0];
+		var maxNum = get.byClass("maxNum",msgBox)[0];
+		var countTxt = get.byClass("countTxt", msgBox)[0];
+		var oul = get.byTag("ul")[0];
+		var oli = get.byTag("li", oul);
+		var oform = get.byTag("form")[0];
+		var oimg = get.byTag("img", oform);
+		var otime = get.byClass("times");
+		var configNum = 140;
+		var bsend = false;
+		EventUtil.addHandler(sendBtn, "click", fnSend);
+
+		for(var i = 0; i < oimg.length; i++){
+			oimg[i].onclick = function(){
+				for(i = 0; i < oimg.length; i++) oimg[i].className = "";
+				this.className = "current";
+			}
+		}
+		function lihover(){
+		for(var i = 0; i < oli.length; i++){
+			oli[i].index = i;
+			EventUtil.addHandler(oli[i], "mouseover", function(){
+				var del = get.byTag("a", get.byClass("times")[this.index])[0];
+				del.className = "del";
+			});
+			EventUtil.addHandler(oli[i], "mouseout", function(){
+				var del = get.byTag("a", get.byClass("times")[this.index])[0];
+				del.className = "";
+			})
+		}
+		}
+		lihover();
+
+		function fnSend(){
+			var reg = /^\s*$/g;
+			if(reg.test(username.value)){
+				alert("用户名是必需的");
+				username.focus();
+			}
+			else if(!/^[u4e00-\u9fa5\w]{2,8}$/g.test(username.value)){
+				alert("姓名由2-8位字母、数字、下划线、汉字组成！");
+				username.focus();
+			}
+			else if(reg.test(conBox.value)){
+				alert("内容不能为空");
+				conBox.focus();
+			}
+			else if(!bsend){
+				alert("内容超出字数");
+				conBox.focus();
+			}
+			else{
+				var newLi = document.createElement("li");
+				var img = get.byClass("current", oform)[0];
+				var oDate = new Date();
+				newLi.innerHTML = "<div class=\"userPic\"><img src=\""+img.src+"\"></div><div class=\"content\"><div class=\"name\"><a href=\"#\">"+username.value+"</a></div><div class=\"msgInfo\">"+conBox.value+"</div><div class=\"times\"><span>"+format(oDate.getMonth())+"月"+format(oDate.getDate())+"日 "+format(oDate.getHours())+":"+format(oDate.getMinutes())+"</span><a href=\"#\">删除</a></div></div>";
+				oli.length ? oul.insertBefore(newLi, oli[0]) : oul.appendChild(newLi);
+				console.log(oli);
+				var maxHeight = newLi.clientHeight - parseFloat(css(newLi, "paddingTop")) - parseFloat(css(newLi, "paddingBottom"));
+				console.log(maxHeight);
+				var opacity = lheight = 0;
+				var timer = setInterval(function(){
+					css(newLi, {"display":"block", "opacity":"0", "height":(lheight +=8)+"px"});
+					if(lheight > maxHeight){
+						clearInterval(timer);
+						timer = setInterval(function(){
+							css(newLi, "opacity", opacity += 10);
+							opacity > 100 && (clearInterval(timer), css(newLi, "opacity", 100));
+						},30);
+					}
+				},30);
+				oform.reset();
+				for(var i = 0; i < oimg.length; i++)oimg[i].className = "";
+				oimg[0].className = "current";
+				lihover();
+				del();
+
+			}
+		}
+
+		EventUtil.addHandler(conBox, "keyup", config);
+		EventUtil.addHandler(conBox, "focus", config);
+		EventUtil.addHandler(conBox, "change", config);
+
+
+		function config(){
+			var ilen = 0;
+			for(var i = 0; i < conBox.value.length; i++) ilen += /[^\x00-\xff]/g.test(conBox.value.charAt(i) )? 1 : 0.5;
+			maxNum.innerHTML = Math.abs(configNum - Math.floor(ilen));
+			configNum - Math.floor(ilen) >= 0 ? (css(maxNum, "color", ""), countTxt.innerHTML = "还能输入", bsend = true) : (css(maxNum, "color", "red"), countTxt.innerHTML = "已超出", bsend = false);
+		}
+
+		config();
+
+		function format(str){
+			return str.toString().replace(/^(\d)$/, "0$1");
+		}
+
+		function del(){
+			for(var i = 0; i < oli.length; i++){
+				console.log(i);
+				oli[i].onmouseover = function(){
+					console.log(this);
+					var oa = get.byClass("del", this)[0];
+					oa.onclick = function(){
+						var parent = this.parentNode.parentNode.parentNode;
+						var lheight = parent.clientHeight - parseFloat(css(parent,"paddingBottom")) - parseFloat(css(parent,"paddingTop"));
+						var opacity = 100;
+						var timer = setInterval(function(){
+							css(parent,"opacity",(opacity -= 8));
+							if(opacity < 0){
+								css(parent,"opacity",0);
+								clearInterval(timer);
+								timer = setInterval(function(){
+									css(parent, {"height":(lheight-=8)+"px"});
+									lheight < 0 && (css(parent,"display","none"),clearInterval(timer));
+								},30);
+							}
+							opacity += 3;
+						},30);
+					}
+				}
+			}
+		}
+		del();
+
+	
+	});
+
+
+
+	</script>
+</head>
+<body>
+	<div class="msgBox">
+		<form>
+			<h2>来,说说你在做什么</h2>
+			<div>
+				<input type="text" class="username">
+				<p>
+					<img src="http://js.fgm.cc/learn/lesson6/img/face1.gif" class="current">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face2.gif">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face3.gif">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face4.gif">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face5.gif">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face6.gif">
+					<img src="http://js.fgm.cc/learn/lesson6/img/face7.gif">
+				</p>
+			</div>
+			<div>
+				<textarea class="conBox"></textarea>
+			</div>
+			<div class="tr">
+				<p>
+					<span class="countTxt">还能输入</span>
+					<strong class="maxNum">140</strong>
+					<span>个字</span>
+					<input type="button" class="sendBtn" title="快捷键Ctrl+Enter">
+				</p>
+			</div>
+		</form>
+		<div class="list">
+			<h3>
+				<span>大家在说</span>
+			</h3>
+			<ul>
+				<li>
+					<div class="userPic">
+						<img src="http://js.fgm.cc/learn/lesson6/img/face.gif">
+					</div>
+					<div class="content">
+						<div class="name">
+							<a href="#">fancy</a>
+						</div>
+						<div class="msgInfo">新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能</div>
+						<div class="times">
+							<span>07月15日 15:14</span>
+							<a href="#" >删除</a>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="userPic">
+						<img src="http://js.fgm.cc/learn/lesson6/img/face.gif">
+					</div>
+					<div class="content">
+						<div class="name">
+							<a href="#">fancy</a>
+						</div>
+						<div class="msgInfo">新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能</div>
+						<div class="times">
+							<span>07月15日 15:14</span>
+							<a href="#" >删除</a>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="userPic">
+						<img src="http://js.fgm.cc/learn/lesson6/img/face.gif">
+					</div>
+					<div class="content">
+						<div class="name">
+							<a href="#">fancy</a>
+						</div>
+						<div class="msgInfo">新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能</div>
+						<div class="times">
+							<span>07月15日 15:14</span>
+							<a href="#">删除</a>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="userPic">
+						<img src="http://js.fgm.cc/learn/lesson6/img/face.gif">
+					</div>
+					<div class="content">
+						<div class="name">
+							<a href="#">fancy</a>
+						</div>
+						<div class="msgInfo">新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能新增删除广播功能</div>
+						<div class="times">
+							<span>07月15日 15:14</span>
+							<a href="#">删除</a>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

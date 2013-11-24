@@ -1,0 +1,34 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>div闪烁</title>
+	<style type="text/css">
+	div{
+		width: 100px;
+		height: 100px;
+		background: red;
+		color: white;
+		margin: 0 auto;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var odiv = document.getElementsByTagName("div")[0];
+		var timer = null;
+		odiv.onclick = function(){
+			clearInterval(timer);
+			var i = 0;
+			var state = true;
+			timer = setInterval(function(){
+				odiv.style.display = i++ % 2 ? "none" : "block";
+				if(i > 6 )clearInterval(timer);
+				//或者: i > 6 && (clearInterval(timer));
+			}, 80);
+		}
+	}
+	</script>
+</head>
+<body>
+	<div>点击我就闪烁</div>
+</body>
+</html>

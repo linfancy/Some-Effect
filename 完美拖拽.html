@@ -1,0 +1,139 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>完美拖拽</title>
+	<style type="text/css">
+	body, html, div, span, h2{
+		padding: 0; margin: 0;
+	}
+	body{
+		background: black;
+		color: #fff;
+		font: 12px/2 Arial;
+	}
+	div{
+		width: 300px;
+		height: 150px;
+		background: #333;
+		border: 2px solid #CCCCCC;
+		position: absolute;
+	}
+	div p{
+		padding: 0 10px;
+	}
+	div span{
+		color: yellow;
+		padding: 0 5px;
+	}
+	h2{
+		background: #222;
+		cursor: move;
+		height: 25px;
+		padding: 0 10px;
+		text-align: right;
+		border-bottom: 2px solid #fff;
+	}
+	h2 a{
+		font: 12px/25px Arial;
+		text-decoration: none;
+		outline: none;
+		color: #fff;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var odiv = document.getElementsByTagName("div")[0];
+		var oh = odiv.getElementsByTagName("h2")[0];
+		var ospan = document.getElementsByTagName("span");
+		var oa = document.getElementsByTagName("a")[0];
+		var drag = false;
+		var track = [{x: odiv.offsetLeft, y : odiv.offsetTop}];
+		var disx = disy = 0;
+		var timer = null;
+
+		oh.onmousedown = function(event){
+			var e = event || window.event;
+			drag = true;
+			disx = e.clientX - odiv.offsetLeft;
+			disy = e.clientY - odiv.offsetTop;
+			this.setCapture && this.setCapture();
+			/*
+			SetCapture()函数的说明为：“该函数在属于当前线程的指定窗口里设置鼠标捕获。一旦窗口捕获了鼠标，所有鼠标输入都针对该窗口，无论光标是否在窗口的边界内。同一时刻只能有一个窗口捕获鼠标。如果鼠标光标在另一个线程创建的窗口上，只有当鼠标键按下时系统才将鼠标输入指向指定的窗口。
+
+			setCapture方法，了解了一下，大体是这样的意思，当在IE文档某个区域中使用了这个方法，并且写了onclick或者 onmouse***等有关的鼠标事件方法，那么它就会监视相应的鼠标操作，即使你的鼠标移出了IE，它也一样能捕获到.如果你在某div中的 onclick事件中写了一个alert命令，这时，你点击的关闭按钮，它也一样会弹出alert窗口.releaseCapture与 setCapture方法相反，释放鼠标监控
+
+			利用这个特性，我们可以延缓IE的关闭窗口等破坏性操作，将一些重要的操作能够在破坏性操作执行之前得到处理.
+			有一点遗憾:setCapture和releaseCapture 不支持键盘事件.只对onmousedown， onmouseup， onmousemove， onclick， ondblclick， onmouseover， onmouseout这样的鼠标事件起作用. 
+			*/
+			state();
+			return false;
+		}
+		oh.onmousemove = function(event){
+			if(!drag) return;
+			var e = event || window.event;
+			var il = e.clientX - disx;
+			var it = e.clientY - disy;
+			var maxx = document.body.clientWidth - odiv.offsetWidth;
+			var maxy = document.body.clientHeight - odiv.offsetHeight;
+			il = (il <= 0 ? 0 : il);
+			il = (il >= maxx ? maxx : il);
+			it = (it <= 0 ? 0 : it);
+			it = (it >= maxy ? maxy : it);
+			odiv.style.left = il + "px";
+			odiv.style.top = it + "px";
+			state();
+			track.push({x:odiv.offsetLeft, y : odiv.offsetTop});
+			return false;
+		}
+		/*
+		在Win32上，mouse move的事件不是一个连续的，也就是说，并不是我们每次移动1px的鼠标指针，就会发生一个mousemove，windows会周期性检查mouse 的位置变化来产生mousemove的事件。
+		所以，如果是一个很小的页面对象，比如一个直径5px的圆点，如果没有setCapture和 releaseCapture，那么在鼠标按住之后，快速的移动鼠标，就有可能鼠标移动走了，但是小圆点还在原地，就是因为下一次的mousemove事 件已经不再发给这个圆点对象了。 
+		*/
+		oh.onmouseup = function(){
+			drag = false;
+			oh.releaseCapture && oh.releaseCapture();
+			state();
+			return false;
+		}
+
+		oa.onclick = function(){
+			timer = setInterval(function(){
+				if(track.lenght == 1)return;
+				var pos = track.pop();
+				pos ? (odiv.style.left = pos.x, odiv.style.top = pos.y, state()) : clearInterval(timer);
+			},30);
+			return false;
+		}
+		/*防止冒泡*/
+		oa.onmousedown = function(event){
+			(event || window.event).cancelBubble = true;
+		}
+
+
+		function state(){
+			ospan[0].innerHTML = drag;
+			ospan[1].innerHTML = odiv.offsetLeft;
+			ospan[2].innerHTML = odiv.offsetTop;
+		}
+		state();
+	}
+	</script>
+</head>
+<body>
+	<div>
+		<h2><a href="#">点击回放拖动轨迹</a></h2>
+		<p>
+			<strong>Drag:</strong>
+			<span>false</span>
+		</p>
+		<p>
+			<strong>OffsetTop:</strong>
+			<span>hah</span>
+		</p>
+		<p>
+			<strong>OffsetLeft:</strong>
+			<span>77</span>
+		</p>
+	</div>
+</body>
+</html>

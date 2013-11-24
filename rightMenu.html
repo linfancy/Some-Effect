@@ -1,0 +1,71 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>rightMenu</title>
+	<style type="text/css">
+	ul,li{padding: 0; margin: 0;}
+	ul{
+		position: absolute;
+		top:-9999px;
+		left:-9999px;
+		width:100px;
+		border-radius:3px;
+		list-style-type:none;
+		border:1px solid #8f8f8f;
+		padding:2px;
+		background:#fff;
+	}
+	li{
+		position:relative;
+		height:24px;
+		padding-left:24px;
+		background:#eaead7;
+		vertical-align:top;
+	}
+	li a{
+		height:24px;
+		display:block;color:#333;background:#fff;padding-left:5px;text-decoration:none;
+	}
+	li em{
+		position:absolute;top:0;left:0;width:24px;height:24px;
+		background: url("http://js.fgm.cc/learn/lesson5/img/ico.png") no-repeat;
+	}
+	li em.cur{background-position:0 0;}
+	li em.copy{background-position:0 -24px;}
+	li em.paste{background-position:0 -48px;} 
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var oul = document.getElementsByTagName("ul")[0];
+		oul.style.display = "none";
+		document.oncontextmenu = function(event){
+			oul.style.display = "block";
+			var e = event || window.event;
+			var x = e.clientX + 10;
+			var y = e.clientY + 10;
+			oul.style.left = x + "px";
+			oul.style.top = y + "px";
+			return false;
+		}
+		document.onclick = function(event){
+			var e = event || window.event;
+			var value = e.button;
+			if(value != 2 && value != 3){
+				oul.style.display = "none";
+			}
+			/*
+			
+			*/
+			
+		}
+	}
+	</script>
+</head>
+<body>
+	<ul>
+		<li><em class="cur"></em><a href="#">bianji</a></li>
+		<li><em class="copy"></em><a href="#">shanchu</a></li>
+		<li><em class="paste"></em><a href="#">tianjia</a></li>
+	</ul>
+</body>
+</html>

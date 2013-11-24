@@ -1,0 +1,96 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Control Div</title>
+	<style type="text/css">
+	div{
+		width: 100px;
+		height: 100px;
+		position: absolute;
+		background: red;
+		left: 200px;top:200px;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var odiv = document.getElementsByTagName("div")[0];
+		var bCtrlkey = btop = bright = bbottom = bleft = false;
+		var width,height,top,left;
+		setInterval(function(){
+			width = odiv.offsetWidth, height = odiv.offsetHeight, top = odiv.offsetTop, left = odiv.offsetLeft;
+			if(btop){
+				if(bCtrlkey){width = odiv.offsetWidth + 5; height = odiv.offsetHeight + 5}
+				else{ top = odiv.offsetTop - 5}
+			}
+			if(bbottom){
+				if(bCtrlkey){width = odiv.offsetWidth - 5; height = odiv.offsetHeight - 5}
+				else{ top = odiv.offsetTop + 5}
+			}
+			if(bright){
+				left = odiv.offsetLeft + 5;
+			}
+			if(bleft){
+				left = odiv.offsetLeft - 5;
+			}
+			limit();
+			odiv.style.width = width + "px";
+			odiv.style.height = height + "px";
+			odiv.style.left = left + "px";
+			odiv.style.top = top + "px";
+		}, 30);
+
+		document.onkeydown = function(event){
+			var e = event || window.event;
+			bCtrlkey = e.ctrlKey;
+			switch(e.keyCode){
+				case 38 : 
+					btop = true; 
+					break;
+				case 39 : 
+					bright = true;
+					break;
+				case 40 : 
+					bbottom = true;
+					break;
+				case 37 : 
+					bleft = true;
+					break;
+			}
+		}
+		document.onkeyup = function(event){
+			bCtrlkey = false;
+			btop = false;
+			bright = false;
+			bbottom = false;
+			bleft = false;
+		}
+
+		function limit(){
+			var doc = [document.body.clientWidth, document.body.clientHeight];
+			console.log(doc);
+			//防止左侧溢出
+			left <=0 && (left = 0);
+			//防止顶部溢出
+			top <=0 && (top = 0);
+			//防止右侧溢出
+			doc[0] - left - width <= 0 && (left = doc[0] - width );
+			//防止底部溢出
+			doc[1] - top - height <= 0 && (top = doc[1] - height );
+		}
+	}
+	</script>
+</head>
+<body>
+	<pre>
+		红色方块为键盘操作区域，您可以进行如下操作： 
+
+		上：↑ 下：↓ 左：← 右：→ 
+		Ctrl + 1 : 背景变为绿色 
+		Ctrl + 2 : 背景变为黄色 
+		Ctrl + 3 : 背景变为蓝色 
+		Ctrl + ↑ : 放大 
+		Ctrl + ↓ : 缩小 
+	</pre>
+	<div></div>
+</body>
+</html>

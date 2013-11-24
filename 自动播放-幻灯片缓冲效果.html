@@ -1,0 +1,131 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>自动播放幻灯片缓冲效果</title>
+	<style type="text/css">
+	body, html, div, ul, li{
+		padding: 0; margin: 0;
+		font: 12px/20px Arial;
+		text-align: center;
+	}
+	ul{
+		list-style-type: none;
+	}
+	body{
+		background: #000;
+	}
+	#box{
+		width: 492px;
+		height: 172px;
+		border: 8px solid #fff;
+		border-radius: 5px;
+		margin: 10px auto;
+		background: #fff;
+		position: relative;
+	}
+	.list{
+		overflow: hidden;
+		position: relative;
+		height: 170px;
+		width: 490px;
+	}
+	.list ul{
+		position: absolute;
+	}
+	.count{
+		position: absolute;
+		bottom: 5px;
+		right: 0;
+	}
+	.count li{
+		float: left;
+		width: 20px;
+		height: 20px;
+		border-radius: 20px;
+		background: #FF9900;
+		color: #fff;
+		cursor: pointer;
+		overflow: hidden;
+		margin-right: 5px;
+		opacity: 0.7;
+	}
+	.count li.current{
+		background: #FF9900;
+		opacity: 1;
+		font-weight: 700;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var olist = document.getElementsByTagName("ul")[0];
+		var oimg = olist.getElementsByTagName("li");
+		var obox = document.getElementById("box");
+		var acount = [];
+		var index = 0;
+		var status = true;
+		var timer = playTimer = null;
+
+		for(var i = 0; i < oimg.length; i++){
+			acount.push("<li>" + (i+1) + "</li>");
+		}
+		var oul = document.createElement("ul");
+		oul.className = "count";
+		oul.innerHTML = acount.join("");
+		obox.appendChild(oul);
+		var obt = oul.getElementsByTagName("li");
+
+		for(var i = 0; i < obt.length; i++){
+			obt[i].index = i;
+			obt[i].onmouseover = function(){
+				clearInterval(playTimer);
+				index = this.index;
+				cutover();
+			}
+			obt[i].onmouseout = function(){
+				autoPlay();
+			}
+		}
+		cutover();
+		autoPlay();
+		function autoPlay(){
+			playTimer = setInterval(function(){
+				status ? ++index : --index;
+				index >= (oimg.length-1) && (index = oimg.length-1,status=false);
+				index <= 0 && (index = 0, status = true);
+				cutover();
+			},3000);
+		}
+
+		function cutover(){
+			for(i = 0; i < obt.length; i++)obt[i].className = "";
+			obt[index].className = "current";
+			var tmp = (index * oimg[0].offsetHeight);
+			clearInterval(timer);
+			timer = setInterval(function(){
+				move(-tmp);
+			},30);
+		}
+
+		function move(itarget){
+			var speed = (itarget -olist.offsetTop)/10;
+			speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+			//console.log("offsetTop:"+olist.offsetTop + " speed:"+speed+" offsetTop+speed:" +olist.offsetTop+speed);
+			olist.offsetTop == itarget ? clearInterval(timer) : (olist.style.top = olist.offsetTop + speed + "px");
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="box">
+		<div class="list">
+			<ul>
+				<li><img src="http://js.fgm.cc/learn/lesson7/img/01.jpg"></li>
+				<li><img src="http://js.fgm.cc/learn/lesson7/img/02.jpg"></li>
+				<li><img src="http://js.fgm.cc/learn/lesson7/img/03.jpg"></li>
+				<li><img src="http://js.fgm.cc/learn/lesson7/img/04.jpg"></li>
+				<li><img src="http://js.fgm.cc/learn/lesson7/img/05.jpg"></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

@@ -2,5 +2,93 @@
 <head>
 	<meta charset="utf-8">
 	<title>跟随鼠标移动-展示</title>
+	<style type="text/css">
+	body{
+		overflow: hidden;
+	}
+	ul, li, img{
+		padding: 0;
+		margin: 0;
+	}
+	ul{
+		list-style-type: none;
+		position: relative;
+		left: 50%;
+		float: left;
+	}
+	li{
+		position: relative;
+		left: -50%;
+		float: left;
+		cursor: pointer;
+		height: 170px;
+		width: 170px;
+		margin: 0 10px;
+		border: 1px #777 solid;
+		display: inline;
+	}
+	div{
+		position: absolute;
+		width: 400px;
+		height: 400px;
+		background: #777;
+		display: none;
+	}
+	li:hover{
+		border:red 1px solid;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var oli = document.getElementsByTagName("li");
+		var odiv = document.getElementsByTagName("div")[0];
+		function changediv(event){
+			
+		}
+		for(var i = 0; i < oli.length; i++){
+			oli[i].index = i;
+			oli[i].onmouseover = function(event){
+				var oimg = document.createElement("img");
+				var img = new Image();
+				img.src = oimg.src =  oli[this.index].getElementsByTagName("img")[0].src.replace(".jpg", "_big.jpg");
+				odiv.appendChild(oimg);
+				odiv.style.display = "block";
+				/*img.complete ? odiv.style.display = "none" : (oimg.onload = function(){
+					odiv.style.display = "none";
+				});*/
+				/*
+				img.onload是当一张图片被加载完成后所触发的事件
+
+				对于 complete 属性来讲，IE是根据图片是否显示过来判断，就是说当加载的图片显示出来后，complete 属性的值才为 true ，否则一直是 false ，和以前是否加载过该张图片没有关系，即和缓存没有关系！这里要注意，显示与否和img.style.display无关；*/
+
+			}
+			oli[i].onmousemove = function(event){
+				var width = document.body.offsetWidth;
+				var height = document.body.offsetHeight;
+				var e = event || window.event;
+				var x = event.clientX;
+				var y = e.clientY;
+				x = width - x >= odiv.offsetWidth ? (x + 15) : (x-(odiv.offsetWidth + 15));
+				var left = x;
+				var top = y + 15 ;
+				odiv.style.left = left + "px";
+				odiv.style.top = top + "px";
+			}
+			oli[i].onmouseout = function(){
+				odiv.style.display = "none";
+				odiv.removeChild(odiv.lastChild);
+			}
+		}
+	}
+	</script>
 </head>
+<body>
+	<ul>
+		<li><img src="http://js.fgm.cc/learn/lesson5/img/shirt_1.jpg"></li>
+		<li><img src="http://js.fgm.cc/learn/lesson5/img/shirt_2.jpg"></li>
+		<li><img src="http://js.fgm.cc/learn/lesson5/img/shirt_3.jpg"></li>
+		<li><img src="http://js.fgm.cc/learn/lesson5/img/shirt_4.jpg"></li>
+	</ul>
+	<div></div>
+</body>
 </html>
