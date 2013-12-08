@@ -1,0 +1,107 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>手机解锁</title>
+	<style type="text/css">
+	body, html, div, span{
+		margin: 0; padding: 0;
+	}
+	#phone{
+		width: 426px;
+		height: 640px;
+		position: relative;
+		margin: 10px auto;
+		background: url("http://fgm.cc/iphone/1.jpg") no-repeat;
+	}
+	#lock{
+		width: 358px;
+		height: 62px;
+		position: absolute;
+		left: 50%;
+		margin-left: -179px;
+		bottom: 33px;
+	}
+	#lock span{
+		width: 93px;
+		height: 62px;
+		position: absolute;
+		background: url("http://fgm.cc/iphone/btn.jpg") no-repeat;
+		cursor: pointer;
+	}
+	#phonedisplay{
+		background: url("http://fgm.cc/iphone/2.jpg") no-repeat;
+		display: none;
+		width: 426px;
+		height: 640px;
+		margin: 10 auto;
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var olock = document.getElementById("lock");
+		var ospan = olock.getElementsByTagName("span")[0];
+		var phonedisplay = document.getElementById("phonedisplay");
+		var ophone = document.getElementById("phone");
+		ospan.onmousedown = function(event){
+			var e = event || window.event;
+			var disx = e.clientX - this.offsetLeft;
+			var middle =  (olock.offsetWidth)/2;
+			var ospanmiddle = ospan.offsetWidth / 2;
+			document.onmousemove = function(event){
+				var e = event || window.event;
+				pos = e.clientX - disx;
+				if(pos > olock.offsetWidth - ospan.clientWidth){
+					pos = olock.clientWidth - ospan.clientWidth;
+				}
+				else if(pos < olock.offsetLeft){
+					pos = olock.clientLeft;
+				}
+				ospan.style.left = pos + "px";
+			};
+			document.onmouseup = function(event){
+				document.onmouseup = null;
+				document.onmousemove = null;
+				ospan.releaseCapture && ospan.releaseCapture();
+				var target = ospan.offsetLeft + ospanmiddle <= middle ? 0 : (olock.offsetWidth - ospan.clientWidth);
+				console.log(ospan.offsetLeft + ospanmiddle);
+				console.log(middle);
+				console.log(target);
+				startMove(ospan, target,function(){
+					if(ospan.offsetLeft == olock.offsetWidth - ospan.clientWidth){
+						ophone.style.display = "none";
+						phonedisplay.style.display = "block";
+					}
+				});
+			}
+		}
+		function startMove(obj, target, fn){
+			clearInterval(obj.timer);
+			obj.timer = setInterval(function(){
+				doMove(obj, target, fn);
+			}, 30);
+		}
+
+		function doMove (obj, target, fn){
+			var speed = (target - ospan.offsetLeft) / 10;
+			speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+			if(obj.offsetLeft == target){
+				clearInterval(obj.timer);
+				fn && fn();
+				return;
+			}
+			obj.style.left = obj.offsetLeft + speed + "px";
+		}
+	}
+
+	
+	</script>
+</head>
+<body>
+	<div id="phone">
+		<div id="lock">
+			<span></span>
+		</div>
+	</div>
+	<div id="phonedisplay"></div>
+</body>
+</html>
