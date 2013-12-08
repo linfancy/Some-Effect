@@ -19,6 +19,17 @@
 			originWidth.push(img[i].width);
 			img[i].width = img[i].offsetWidth / 2;
 		}
+		document.onmousemove = function(event){
+			var e = event || window.event;
+			for(var i = 0; i < img.length; i++){
+				var a = e.clientX - img[i].offsetLeft - img[i].offsetWidth/2;
+				var b = e.clientY - img[i].offsetTop - omenu.offsetTop - img[i].offsetHeight/2;
+				var isScroll = 1 - Math.sqrt(a*a + b*b)/300;
+				if(isScroll < 0.5) isScroll = 0.5;
+				img[i].width = originWidth[i] * isScroll;
+			}
+			
+		}
 	}
 	</script>
 </head>
