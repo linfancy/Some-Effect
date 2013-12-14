@@ -1,0 +1,280 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>自定义滚动条</title>
+	<style type="text/css">
+	body, html, div, ul, li, p{
+		padding: 0; margin: 0;
+	}
+	body{background: #3e3e3e;}
+	#box{
+		width: 600px;
+		margin: 20px auto;
+	}
+	.list{
+		width: 100%;
+		height: 144px;
+		overflow: hidden;
+		position: relative;
+		 margin-bottom: 10px;
+	}
+	.list ul{
+		list-style-type: none;
+		width: 10000px;
+		 position: absolute;
+	}
+	.list ul li{
+		float: left;
+		background: black;
+		border-radius: 8px;
+		margin-right: 8px;
+		width: 144px;
+		height: 144px;
+		overflow: hidden;
+	}
+	.list ul li img{
+		width: 124px;
+		height: 100px;
+		border-radius: 5px;
+		float: left;
+		margin: 10px 0 0 10px;
+	}
+	.list ul li p{
+		float: left;
+		text-align: center;
+		width: 100%;
+		color: white;
+		line-height: 34px;
+	}
+	.scrollBar{
+		width: 100%;
+		height: 19px;
+		position: relative;
+		background: #888;
+		overflow: hidden;
+		background: #0a0a0a;
+	}
+	.scrollBar .barL, .scrollBar .barR{
+		position: absolute;
+		width: 28px;
+		height: 19px;
+		cursor: pointer;
+		background: #777;
+		background: url("http://js.fgm.cc/learn/lesson8/img/03.gif");
+	}
+	.scrollBar .barL{
+		left: 0px;
+	}
+	.scrollBar .barR{
+		right: 0px;
+		top: 0px;
+		background-position: right 0;
+	}
+	.scrollBar .barM{
+		height: 15px;
+		border:1px solid #545454;
+		position: relative;
+		border-width: 1px 0;
+		margin: 0 28px;
+		padding: 1px 0;
+		cursor: pointer;
+		z-index: 1;
+	}
+	.scrollBar .bar{
+		position: absolute;
+		height: 15px;
+		cursor: e-resize;
+		background: url("http://js.fgm.cc/learn/lesson8/img/01.gif") repeat-x;
+	}
+	.scrollBar .l, .scrollBar .r{
+		position: absolute;
+		top: 0;
+		width: 6px;
+		height: 15px;
+		background: url("http://js.fgm.cc/learn/lesson8/img/02.gif");
+	}
+	.scrollBar .l{
+		left: -6px;
+	}
+	.scrollBar .r{
+		right: -6px;
+		background-position: right 0 ;
+	}
+	</style>
+	<script type="text/javascript">
+	var get = {
+		byId: function(id) {
+			return typeof id === "string" ? document.getElementById(id) : id
+		},
+		byClass: function(sClass, oParent) {
+			var aClass = [];
+			var reClass = new RegExp("(^| )" + sClass + "( |$)");
+			var aElem = this.byTag("*", oParent);
+			for (var i = 0; i < aElem.length; i++) reClass.test(aElem[i].className) && aClass.push(aElem[i]);
+			return aClass
+		},
+		byTag: function(elem, obj) {
+			return (obj || document).getElementsByTagName(elem)
+		}
+	};
+
+	function getStyle(obj, attr){
+		return parseFloat(obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj, null)[attr]);
+	}
+
+	function startMove(obj, target, fn, buffer){
+		clearInterval(obj.timer);
+		obj.timer = setInterval(function(){
+			doMove(obj, target, fn, buffer);
+		}, 25);
+	}
+
+	function doMove(obj, target, fn, buffer){
+		var speed = (target - obj.offsetLeft) / (buffer || 5);
+		speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+		if(obj.offsetLeft == target){
+			clearInterval(obj.timer);
+			fn && fn();
+		}
+		obj.style.left = obj.offsetLeft + speed + "px";
+	}
+
+	
+
+	window.onload = function(){
+		var obox = get.byId("box");
+		var olist = get.byClass("list", obox)[0];
+		var oul = get.byTag("ul", obox)[0];
+		var oli = get.byTag("li", oul);
+		var oscrollBar = get.byClass("scrollBar", obox)[0];
+		var obarM = get.byClass("barM", oscrollBar)[0];
+		var obar = get.byClass("bar", oscrollBar)[0];
+		var obarL = get.byClass("barL", oscrollBar)[0];
+		var obarR = get.byClass("barR", oscrollBar)[0];
+		var timer = null;
+		var maxL = obarM.offsetWidth - obar.offsetWidth;
+
+		oul.style.width = (oli[0].offsetWidth + getStyle(oli[0], "marginRight")) * oli.length + "px";
+		obar.style.width = olist.offsetWidth / oul.offsetWidth * obarM.offsetWidth + "px";
+
+		obar.onmousedown = function(event){
+			var e = event || window.event;
+			var startPos = this.offsetLeft;
+			var headLength = e.clientX - startPos;
+			var moveLength = 0;
+			document.onmousemove = function(event){
+				var e = event || window.event;
+
+				moveLength = e.clientX - headLength;
+				moveLength > (obarM.offsetWidth - obar.offsetWidth) && (moveLength = (obarM.offsetWidth - obar.offsetWidth));
+				moveLength < 0 && (moveLength = 0);
+				obar.style.left = moveLength + "px";
+			}
+			document.onmouseup = function(event){
+				var e = event || window.event;
+				var endPos = e.clientX;
+				var target = (oul.offsetWidth - olist.offsetWidth)/(obarM.offsetWidth - obar.offsetWidth)*moveLength;
+				startMove(oul, -parseInt(target));
+
+				document.onmouseup = null;
+				document.onmousemove = null;
+				obar.onclick = null;
+			}
+		}
+		obar.onclick = function(event){
+			(event || window.event).cancelBubble = true;
+		}
+		obarL.onmouseover = obarR.onmouseover = function(event){
+			clearInterval(timer);
+			var e = event || window.event;
+			var ispeed=0;
+			if(this == obarL){
+				ispeed = -5;
+			}
+			else if(this == obarR){
+				ispeed = 5;
+			}
+			timer = setInterval(function(){
+				togetherMove(obar.offsetLeft+ispeed, 1);
+			},30);
+		}
+		obarL.onmouseout = obarR.onmouseout = function(){
+			clearInterval(timer);
+		}
+
+		function togetherMove(target, buffer){
+			if(target <= 0){
+				timer && clearInterval(timer);
+				target = 0;
+			}
+			else if(target >= (obarM.offsetWidth - obar.offsetWidth)){
+				timer && clearInterval(timer);
+				target = (obarM.offsetWidth - obar.offsetWidth);
+			}
+			startMove(oul, parseInt((olist.offsetWidth-oul.offsetWidth)*target/(obarM.offsetWidth - obar.offsetWidth)), function(){return false;}, buffer);
+			startMove(obar, target, function(){return false;}, buffer);
+		}
+
+	}
+	</script>
+</head>
+<body>
+	<div id="box">
+		<div class="list">
+			<ul>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/1.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/2.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/3.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/4.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/5.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/6.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/7.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/8.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/9.jpg">
+					<p>iphone 4</p>
+				</li>
+				<li>
+					<img src="http://js.fgm.cc/learn/lesson8/img/10.jpg">
+					<p>iphone 4</p>
+				</li>
+			</ul>
+		</div>
+		<div class="scrollBar">
+			<div class="barL"></div>
+			<div class="barM">
+				
+				<div class="bar">
+					<div class="l"></div>
+					<div class="r"></div>
+				</div>
+			</div>
+			<div class="barR"></div>
+		</div>
+	</div>
+</body>
+</html>
