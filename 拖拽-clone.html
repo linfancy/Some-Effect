@@ -1,0 +1,68 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>拖拽-clone</title>
+	<style type="text/css">
+	body,html,div{
+		padding: 0; margin: 0;
+	}
+	body{background: #3e3e3e;}
+	div{
+		width: 100px;height: 100px;
+		background: black;
+		position: absolute;
+		border: white solid 1px;
+		cursor: pointer;
+	}
+	#drag1{
+		left: 10px; top: 10px;
+	}
+	#drag2{
+		left: 120px;top: 10px;
+	}
+	#temp{
+		filter:alpha(opacity:30);
+		opacity: 0.3;
+		display: none;
+
+	}
+	</style>
+	<script type="text/javascript">
+	window.onload = function(){
+		var zIndex = 1;
+		var odrag1 = document.getElementById("drag1");
+		var odrag2 = document.getElementById("drag2");
+		var otemp = document.getElementById("temp");
+		odrag1.onmousedown = odrag2.onmousedown = function(event){
+			var e = event || window.event;
+			var _this = this;
+			otemp.style.left = _this.offsetLeft + "px";
+			otemp.style.top = _this.offsetTop + "px";
+			var tempDisX = e.clientX - otemp.offsetLeft;
+			var tempDisY = e.clientY - otemp.offsetTop;
+			otemp.style.display = "block";
+			document.onmousemove = function(event){
+				var e = event || window.event;
+				otemp.style.left = e.clientX - tempDisX + "px";
+				otemp.style.top = e.clientY - tempDisY + "px";
+			}
+			document.onmouseup = function(event){
+				otemp.style.display = "none";
+				var e = event || window.event;
+				_this.style.left = e.clientX - tempDisX + "px";
+				_this.style.top = e.clientY - tempDisY + "px";
+				zIndex ++;
+				_this.style.zIndex = zIndex;
+				document.onmousemove = null;
+				document.onmouseup = null;
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+	<div id="drag1"></div>
+	<div id="drag2"></div>
+	<div id="temp"></div>
+</body>
+</html>

@@ -70,6 +70,14 @@
 		top: 0px;
 		background-position: right 0;
 	}
+	.scrollBar .barLstop{
+		left: 0;
+		background-position: 0 -19px;
+	}
+	.scrollBar .barRstop{
+		right: 0;
+		background-position: right -19px;
+	}
 	.scrollBar .barM{
 		height: 15px;
 		border:1px solid #545454;
@@ -104,7 +112,7 @@
 	<script type="text/javascript">
 	var get = {
 		byId: function(id) {
-			return typeof id === "string" ? document.getElementById(id) : id
+			return typeof id === "string" ? document.getElementById(id) : id;
 		},
 		byClass: function(sClass, oParent) {
 			var aClass = [];
@@ -174,7 +182,7 @@
 				var e = event || window.event;
 				var endPos = e.clientX;
 				var target = (oul.offsetWidth - olist.offsetWidth)/(obarM.offsetWidth - obar.offsetWidth)*moveLength;
-				startMove(oul, -parseInt(target));
+				startMove(oul, -parseInt(target),isStop);
 
 				document.onmouseup = null;
 				document.onmousemove = null;
@@ -184,22 +192,42 @@
 		obar.onclick = function(event){
 			(event || window.event).cancelBubble = true;
 		}
-		obarL.onmouseover = obarR.onmouseover = function(event){
+		obarL.onmouseover = obarR.onmouseover = document.onkeydown = function(event){
 			clearInterval(timer);
 			var e = event || window.event;
 			var ispeed=0;
-			if(this == obarL){
+			if(this == obarL || e.keyCode == "37"){
 				ispeed = -5;
 			}
-			else if(this == obarR){
+			else if(this == obarR || e.keyCode == "39"){
 				ispeed = 5;
 			}
 			timer = setInterval(function(){
 				togetherMove(obar.offsetLeft+ispeed, 1);
 			},30);
 		}
-		obarL.onmouseout = obarR.onmouseout = function(){
+		obarL.onmouseout = obarR.onmouseout = document.onkeyup = function(){
 			clearInterval(timer);
+		}
+
+		obox.onmouseover = function(event){
+			var e = event || window.event;
+			function mouseWheel(e){
+				var delta = e.wheelDelta ? e.wheelDelta : -e.detail*40;
+				var iTarget = delta > 0 ? -50 : 50;
+				togetherMove(obar.offsetLeft + iTarget);
+				//事件阻止方式不一样：FF只支持e.preventDefault()，IE只支持e.returnValue=false/return false;
+				e.preventDefault();
+				e.returnValue = false;
+			}
+			addHandler(this, "mousewheel", mouseWheel);
+			addHandler(this, "DOMMouseScroll", mouseWheel);
+			addHandler(window, "mousewheel", function(){return false;});
+			addHandler(window, "DOMMouseScroll", function(){return false;});
+		}
+
+		function addHandler(obj, type, handler){
+			return obj.addEventListener ? obj.addEventListener(type, handler, false) : (obj.attachEvent("on"+type, handler));
 		}
 
 		function togetherMove(target, buffer){
@@ -211,9 +239,22 @@
 				timer && clearInterval(timer);
 				target = (obarM.offsetWidth - obar.offsetWidth);
 			}
-			startMove(oul, parseInt((olist.offsetWidth-oul.offsetWidth)*target/(obarM.offsetWidth - obar.offsetWidth)), function(){return false;}, buffer);
-			startMove(obar, target, function(){return false;}, buffer);
+			startMove(oul, parseInt((olist.offsetWidth-oul.offsetWidth)*target/(obarM.offsetWidth - obar.offsetWidth)), function(){return isStop();}, buffer);
+			startMove(obar, target, function(){return isStop();}, buffer);
 		}
+
+		function isStop(){
+			obarL.className = "barL";
+			obarR.className = "barR";
+			switch(obar.offsetLeft){
+				case 0:
+					/(^|\s)barLstop(\s|$)/.test(obarL.className) || (obarL.className += " barLstop");
+					break;
+				case (obarM.offsetWidth - obar.offsetWidth):
+					/(^|\s)barRstop(\s|$)/.test(obarR.className) || (obarR.className += " barRstop");
+			}
+		}
+		isStop();
 
 	}
 	</script>
@@ -276,5 +317,13 @@
 			<div class="barR"></div>
 		</div>
 	</div>
+	<dl id="desc">
+<dt>功能说明：</dt>
+<dd>① 拖动滚动条，图片列表缓冲滑动至目标点；</dd>
+<dd>② 滚动条两端鼠标移入自动滑动；</dd>
+<dd>③ 滚动条滑动到两端自动更换为停止标识；</dd>
+<dd>⑤ 支持键盘左右键；</dd>
+<dd>⑥ 支持鼠标滚轮。</dd>
+</dl>
 </body>
 </html>
