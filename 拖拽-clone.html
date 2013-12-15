@@ -36,26 +36,45 @@
 		odrag1.onmousedown = odrag2.onmousedown = function(event){
 			var e = event || window.event;
 			var _this = this;
-			otemp.style.left = _this.offsetLeft + "px";
-			otemp.style.top = _this.offsetTop + "px";
-			var tempDisX = e.clientX - otemp.offsetLeft;
-			var tempDisY = e.clientY - otemp.offsetTop;
-			otemp.style.display = "block";
+			otemp.style.left = _this.clientLeft + "px";
+			otemp.style.top = _this.clientTop + "px";
+			var tempDisX = e.clientX - _this.offsetLeft;
+			var tempDisY = e.clientY - _this.offsetTop;
 			document.onmousemove = function(event){
 				var e = event || window.event;
-				otemp.style.left = e.clientX - tempDisX + "px";
-				otemp.style.top = e.clientY - tempDisY + "px";
+				var l = e.clientX - tempDisX;
+				var r = e.clientY - tempDisY;
+
+				l < 0 && (l = 0);
+				l > document.body.clientWidth - _this.offsetWidth && (l = document.body.clientWidth - _this.offsetWidth);
+				r < 0 && (r = 0);
+				r > document.body.clientHeight - _this.clientHeight && (r = document.body.clientHeight - _this.clientHeight); 
+				otemp.style.left = l + "px";
+				otemp.style.top = r + "px";
+				otemp.style.display = "block";
+				zIndex ++;
+				otemp.style.zIndex = zIndex;
+				return false;
 			}
 			document.onmouseup = function(event){
 				otemp.style.display = "none";
 				var e = event || window.event;
-				_this.style.left = e.clientX - tempDisX + "px";
-				_this.style.top = e.clientY - tempDisY + "px";
-				zIndex ++;
+				var l = e.clientX - tempDisX;
+				var r = e.clientY - tempDisY;
+
+				l < 0 && (l = 0);
+				l > document.body.clientWidth - _this.offsetWidth && (l = document.body.clientWidth - _this.offsetWidth);
+				r < 0 && (r = 0);
+				r > document.body.clientHeight - _this.clientHeight && (r = document.body.clientHeight - _this.clientHeight);
+				_this.style.left = l + "px";
+				_this.style.top = r + "px";
 				_this.style.zIndex = zIndex;
 				document.onmousemove = null;
 				document.onmouseup = null;
+				_this.releaseCapture && _this.releaseCapture();
 			}
+			_this.setCapture && _this.setCapture();
+			return false;
 		}
 	}
 	</script>
