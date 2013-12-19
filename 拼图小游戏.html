@@ -55,8 +55,34 @@
 				}
 				this.className = "select";
 			}
-
 		}
+	}
+
+	function startMove(obj, pos, endFn){
+		clearInterval(obj.timer);
+		obj.timer = setInterval(function(){
+			doMove(obj, pos, endFn);
+		}, 30);
+	}
+
+	function doMove(obj, pos, endFn){
+		var currentX = getStyle(obj, "left");
+		var currentY = getStyle(obj, "top");
+		var speedX = (pos.left - currentX) / 5;
+		var speedY = (pos.top - currentY) / 5;
+		speedX = speedX > 0 ? Math.ceil(speedX) : Math.floor(speedX);
+		speedY = speedY > 0 ? Math.ceil(speedY) : Math.floor(speedY);
+		if(pos.left == currentX && pos.top == currentY){
+			clearInterval(obj.timer);
+			endFn && endFn();
+		}else{
+			obj.style.left = currentX + speedX + "px";
+			obj.style.top = currentY + speedY + "px";
+		}
+	}
+
+	function getStyle(obj, attr){
+		return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj, null)[attr];
 	}
 	</script>
 </head>
