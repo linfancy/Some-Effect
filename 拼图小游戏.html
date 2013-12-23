@@ -36,25 +36,194 @@
 		height: 570px;
 		margin: 10px auto;
 		list-style-type: none;
+		position: relative;
 	}
 	#box li{
 		float: left;
 		width: 82px;
 		height: 190px;
 		overflow: hidden;
+		cursor: crosshair;
+	}
+	#box li.near{
+		border: 1px dashed yellow;
+		width: 80px;
+		height: 188px;
+	}
+	#mask{
+		position: absolute;
+		width: 410px;
+		height: 570px;
+		top: 0;left: 0;
+		opacity: 0;
+		filter:alpha(opacity=0);
+		background: red;
 	}
 	</style>
 	<script type="text/javascript">
+	var zIndex = 1;
 	window.onload = function(){
-		var ophoto = document.getElementById("photo");
-		var oimg = ophoto.getElementsByTagName("img");
-		for(var i = 0; i < oimg.length; i++){
-			oimg[i].onclick = function(){
-				for(var j = 0; j < oimg.length; j++){
-					oimg[j].className = "";
+		var aphoto = document.getElementById("photo");
+		var aimg = aphoto.getElementsByTagName("img");
+		var abox = document.getElementById("box");
+		var ali = abox.getElementsByTagName("li");
+		var start = document.getElementsByTagName("button")[0];
+		var aDataStart, aDataEnd;
+		var adata = [];
+		var apos = [];
+		var imagepath = 0;
+		for(var i = 0; i < 15; i++) adata.push(i+1);
+		for(var i = 0; i < aimg.length; i++){
+			aimg[i].index = i;
+			aimg[i].onclick = function(){
+				for(var j = 0; j < aimg.length; j++){
+					aimg[j].className = "";
 				}
 				this.className = "select";
+				imagepath = this.index;
+				abox.innerHTML = "";
+				makemark();
+				adata.sort(function(a, b){return a-b});
+				GAME(false);
 			}
+		}
+
+		function makemark(){
+			var mark = document.createElement("div");
+			mark.id = "mask";
+			mark.style.zIndex = zIndex++;
+			abox.appendChild(mark);
+		}
+		makemark();
+
+		function GAME(ran){
+			ran && adata.sort(function(a, b){return Math.random() > 0.5 ? -1:1;});
+			ofragment = document.createDocumentFragment();
+			for(var i = 0; i < adata.length; i++){
+				var oli = document.createElement("li");
+				var oimg = document.createElement("img");
+				oimg.src = "http://js.fgm.cc/learn/lesson9/img/girl" + imagepath + "/"+adata[i]+".png";
+				oli.appendChild(oimg);
+				ofragment.appendChild(oli);
+			}
+			abox.appendChild(ofragment);
+			abox.style.backgroundImage = "url(http://js.fgm.cc/learn/lesson9/img/girl"+imagepath+"/bg.png)";
+			for(var i = 0; i < ali.length; i++){
+				ali[i].index = i;
+				ali[i].style.left = ali[i].offsetLeft + "px";
+				ali[i].style.top = ali[i].offsetTop + "px";
+				apos.push({"left":ali[i].offsetLeft, "top": ali[i].offsetTop});
+			}
+			for(var i = 0; i < ali.length; i++){
+				ali[i].style.position = "absolute";
+				ali[i].style.margin = 0;
+				drag(ali[i]);
+			}
+
+			function drag(obj, handle){
+				var handle = handle || obj;
+				handle.style.cursor = "move";
+				handle.onmousedown = function(event){
+					var e = event || window.event;
+					var objposX = e.clientX - this.offsetLeft;
+					var objposY = e.clientY - this.offsetTop;
+
+					var onear =  null;
+					obj.style.zIndex = zIndex++;
+					document.onmousemove = function(event){
+						var e = event || window.event;
+						var leftpos = e.clientX - objposX;
+						var toppos = e.clientY - objposY;
+						var maxL = obj.parentNode.clientWidth - obj.offsetWidth;
+						var maxT = obj.parentNode.clientHeight - obj.offsetHeight;
+						leftpos < 0 && (leftpos = 0);
+						toppos < 0 && (toppos = 0);
+						leftpos > maxL && (leftpos = maxL);
+						toppos > maxT && (toppos = maxT);
+						obj.style.left = leftpos + "px";
+						obj.style.top = toppos + "px";
+
+						for(var i = 0; i < ali.length; i++){ ali[i].className = "";}
+						onear = findNearPos(obj);
+						onear && (onear.className = "near");
+						return false;
+					}
+					document.onmouseup = function(event){
+						document.onmouseup = null;
+						document.onmousemove = null;
+
+						if(onear){
+							var tIndex = obj.index;
+							obj.index = onear.index;
+							onear.index = tIndex;
+							onear.className = "";
+							startMove(obj, apos[obj.index]);
+							startMove(onear, apos[onear.index], function(){
+								if(finish()){
+									aDataEnd = new Date();
+									var ihour = imin = isec = 0;
+									var iremain = parseInt((aDataEnd.getTime() - aDataStart.getTime())/1000);
+									ihour = parseInt(iremain/3600);
+									iremain %= 3600;
+									imin = parseInt(iremain/60);
+									iremain %= 60;
+									isec = iremain;
+									alert("完成时间:"+ihour+"时"+imin+"分"+isec+"秒");
+								}
+							});
+						}else{
+							startMove(obj, apos[obj.index]);
+						}
+						handle.releaseCapture && handle.releaseCapture();
+					}
+
+					this.setCapture && this.setCapture();
+					return false;
+				}
+			}
+
+			function findNearPos(obj){
+				var filterLi = [];
+				var adistance = [];
+				for(var i = 0; i < ali.length; i++){
+					ali[i] != obj && (filterLi.push(ali[i]),adistance.push(getDistance(obj, ali[i])));
+				}
+				var near = Number.MAX_VALUE;
+				var minLi = null;
+				for(var i = 0; i < adistance.length; i++){
+					adistance[i] < near && (near = adistance[i], minLi = filterLi[i]);
+				}
+
+				return minLi;
+
+			}
+		}
+		GAME();
+
+		start.onclick = function(){
+			aDataStart = new Date();
+			abox.innerHTML = "";
+			this.value="重新开始";
+			GAME(true);
+		}
+
+		function finish(){
+			var aTemp = [];
+			var success = true;
+			aTemp.length = 0;
+			for(var i = 0; i < ali.length; i++){
+				for(var j = 0; j < ali.length; j++){
+					i == ali[j]["index"] && aTemp.push(ali[j].getElementsByTagName("img")[0].src.match(/(\d+)\./)[1]);
+				}
+			}
+			console.log(aTemp);
+			for(var i = 1; i <= aTemp.length; i++){
+				if(i != aTemp[i-1]){
+					success = false;
+					break;
+				}
+			}
+			return success;
 		}
 	}
 
@@ -66,8 +235,8 @@
 	}
 
 	function doMove(obj, pos, endFn){
-		var currentX = getStyle(obj, "left");
-		var currentY = getStyle(obj, "top");
+		var currentX = obj.offsetLeft;
+		var currentY = obj.offsetTop;
 		var speedX = (pos.left - currentX) / 5;
 		var speedY = (pos.top - currentY) / 5;
 		speedX = speedX > 0 ? Math.ceil(speedX) : Math.floor(speedX);
@@ -84,61 +253,22 @@
 	function getStyle(obj, attr){
 		return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj, null)[attr];
 	}
+	//求两点距离
+	function getDistance(obj1, obj2){
+		var a = (obj1.offsetLeft + obj1.offsetWidth/2) - (obj2.offsetLeft + obj2.offsetWidth/2);
+		var b = (obj1.offsetTop + obj1.offsetHeight/2) - (obj2.offsetTop + obj2.offsetHeight/2);
+		return Math.sqrt(a*a+b*b);
+	}
 	</script>
 </head>
 <body>
 	<div id="photo">
-		<img src="http://js.fgm.cc/learn/lesson9/img/girl0/girl.jpg">
+		<img src="http://js.fgm.cc/learn/lesson9/img/girl0/girl.jpg" class="select">
 		<img src="http://js.fgm.cc/learn/lesson9/img/girl1/girl.jpg">
 		<img src="http://js.fgm.cc/learn/lesson9/img/girl2/girl.jpg">
 	</div>
 	<center><button>开始游戏</button></center>
 	<ul id="box" style = "background-image:url(http://js.fgm.cc/learn/lesson9/img/girl1/bg.png)">
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/1.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/2.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/3.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/4.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/5.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/6.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/7.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/8.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/9.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/10.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/11.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/12.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/13.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/14.png">
-		</li>
-		<li>
-			<img src="http://js.fgm.cc/learn/lesson9/img/girl1/15.png">
-		</li>
 	</ul>
 </body>
 </html>
