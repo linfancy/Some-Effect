@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>绝对定位撑开div</title>
+	<style type="text/css">
+	#con{
+		width: 992px;
+		margin: 0px auto;
+		border: 1px solid red;
+		position: relative;
+	}
+	#con .con_l{
+		position: absolute;
+		width: 210px;
+		border: 1px solid blue;
+		left: 0px;
+		top: 0px;
+	}
+	</style>
+</head>
+<body>
+	<div id="con">
+		<div class="con_l">
+			<h1>hahah</h1>
+			<span>nono</span>
+		</div>
+	</div>
+</body>
+</html>
