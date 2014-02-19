@@ -32,12 +32,13 @@
                     0 = c && (e[k]("_wtsrt", void 0, c), e[k]("wtsrt_", "_wtsrt", h), e[k]("tbsd_", "wtsrt_"))
                 }
                 try {
-                    a = null, b[f] && b[f].csi && (a = Math.floor(b[f].csi().pageT), e && 0 = d && b[g].load[k]("aft")
-                    };
-                    var l = !1;
+                    a = null, b[f] && b[f].csi && (a = Math.floor(b[f].csi().pageT), e && 0 = d && b[g].load[k]("aft"))
+                };
+                var l = !1;
 
-                    function m() {
-                        l || (l = !0, b[g].load[k]("firstScrollTime"))
-                    }
-                    b.addEventListener ? b.addEventListener("scroll", m, !1) : b.attachEvent("onscroll", m);
+                function m() {
+                    l || (l = !0, b[g].load[k]("firstScrollTime"))
+                }
+                b.addEventListener ? b.addEventListener("scroll", m, !1) : b.attachEvent("onscroll", m);
                 })();
+            })();
